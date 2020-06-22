@@ -1,32 +1,18 @@
 package com.tangem.merchant.application.ui.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import com.tangem.merchant.R
+import com.tangem.merchant.application.ui.base.BaseFragment
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment() {
 
-    companion object {
-        fun newInstance() = SettingsFragment()
+    private val viewModel: SettingsViewModel by viewModels()
+
+    override fun getLayoutId() = R.layout.fg_settings
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
-
-    private lateinit var viewModel: SettingsViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fg_settings, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

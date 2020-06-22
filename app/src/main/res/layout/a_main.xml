@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:elevation="0dp"
         android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Light"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"/>
 
     <androidx.fragment.app.FragmentContainerView

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Merchant</string>
+
+    <string name="screen_title_settings">Settings</string>
 </resources>

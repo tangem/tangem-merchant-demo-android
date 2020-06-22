@@ -1,4 +1,4 @@
-package com.tangem.merchant.common
+package com.tangem.merchant.common.navigation
 
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions

@@ -1,8 +1,12 @@
 package com.tangem.merchant.application.ui.main
 
 import android.os.Bundle
-import android.view.View
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.merchant.R
 import com.tangem.merchant.application.ui.base.BaseFragment
 
@@ -15,8 +19,17 @@ class MainFragment : BaseFragment() {
 
     override fun getLayoutId(): Int = R.layout.fg_main
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val navController = findNavController(this)
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 }

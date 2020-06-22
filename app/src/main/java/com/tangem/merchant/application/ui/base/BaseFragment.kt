@@ -9,7 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.tangem.merchant.common.SnackbarHolder
-import com.tangem.merchant.common.getDefaultNavigationOptions
+import com.tangem.merchant.common.navigation.getDefaultNavigationOptions
 import ru.dev.gbixahue.eu4d.lib.kotlin.common.LayoutHolder
 
 /**
