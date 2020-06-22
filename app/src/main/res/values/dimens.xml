@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="keyboard_button_padding">0dp</dimen>
+    <dimen name="keyboard_button_ripple_padding">20dp</dimen>
+    <dimen name="keyboard_button_text_size">40sp</dimen>
+    <dimen name="keyboard_button_image_size">25sp</dimen>
+</resources>

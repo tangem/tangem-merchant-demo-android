@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FBFBFB</color>
-    <color name="colorPrimaryDark">#E5E5E5</color>
+    <color name="colorPrimary">#0029FF</color>
+    <color name="colorPrimaryDark">#DFDCDC</color>
+    <color name="colorSecondary">#9C27B0</color>
     <color name="colorAccent">#0029FF</color>
+
+    <color name="background">#FFFFFF</color>
+    <color name="delimiter">#F1F1F1</color>
+
+    <color name="text_main">#1C1C1E</color>
+    <color name="rippleColor">#9F9FA3</color>
 </resources>

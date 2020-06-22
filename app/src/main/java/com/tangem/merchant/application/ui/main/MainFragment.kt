@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.merchant.R
 import com.tangem.merchant.application.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.fg_main.*
 
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
@@ -22,6 +24,12 @@ class MainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        keyboard.setTextSize(37f)
+        keyboard.setTextColor(R.color.text_main)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

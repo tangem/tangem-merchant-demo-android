@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
@@ -36,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavController() {
-        val navController = findNavigationController()
+        val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment ?: return
+        val navController = host.navController
         appBarConfiguration = AppBarConfiguration(navController.graph)
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener(NavDestinationLogger(this.weakReference()))
@@ -44,5 +46,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean = findNavigationController().navigateUp(appBarConfiguration)
 
-    private fun findNavigationController():NavController = findNavController(R.id.nav_host_fragment)
+    private fun findNavigationController(): NavController = findNavController(R.id.nav_host_fragment)
 }
