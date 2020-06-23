@@ -5,9 +5,13 @@
     <color name="colorSecondary">#9C27B0</color>
     <color name="colorAccent">#0029FF</color>
 
+    <color name="main_black">#1C1C1E</color>
     <color name="background">#FFFFFF</color>
     <color name="delimiter">#F1F1F1</color>
+    <color name="editTextUnderline">#8D8D8F</color>
 
-    <color name="text_main">#1C1C1E</color>
+    <color name="textPrimary">@color/main_black</color>
+    <color name="textSecondary">#636366</color>
+
     <color name="rippleColor">#9F9FA3</color>
 </resources>

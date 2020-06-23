@@ -28,6 +28,7 @@ class KeyboardView @JvmOverloads constructor(
     }
 
     private fun initAssociations() {
+        associations.append(R.id.pin_code_button_coma, KeyboardButtonEnum.BUTTON_COMA)
         associations.append(R.id.pin_code_button_0, KeyboardButtonEnum.BUTTON_0)
         associations.append(R.id.pin_code_button_1, KeyboardButtonEnum.BUTTON_1)
         associations.append(R.id.pin_code_button_2, KeyboardButtonEnum.BUTTON_2)

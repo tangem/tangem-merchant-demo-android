@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">Merchant</string>
 
+    <!--  Screen titles  -->
     <string name="screen_title_settings">Settings</string>
+    <string name="screen_title_settings_add_blc">Add Blockchain</string>
+
     <string name="btn_charge">Charge</string>
+    <string name="hint_merchant_title">Merchant title</string>
+    <string name="hint_blc_address">Address</string>
+    <string name="title_blcs">Blockchains</string>
+    <string name="title_add_blc">Add Blockchain</string>
+
 </resources>

@@ -29,7 +29,7 @@ class MainFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         keyboard.setTextSize(37f)
-        keyboard.setTextColor(R.color.text_main)
+        keyboard.setTextColor(R.color.textPrimary)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -18,8 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Merchant Title"
-            android:textColor="@color/text_main"
+            android:textColor="@color/textPrimary"
             android:textSize="26sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -51,8 +50,7 @@
                 android:id="@+id/tvFiatCurrency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="$"
-                android:textColor="@color/text_main"
+                android:textColor="@color/textPrimary"
                 android:textSize="50sp"
                 android:textStyle="bold"
                 tools:text="$" />
@@ -65,8 +63,7 @@
                 android:id="@+id/tvFiatValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="45,5"
-                android:textColor="@color/text_main"
+                android:textColor="@color/textPrimary"
                 android:textSize="50sp"
                 android:textStyle="bold"
                 tools:text="45,5" />
@@ -96,7 +93,6 @@
                     android:id="@+id/tvBlockchainValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0.000045"
                     android:textSize="16sp"
                     tools:text="0.000045" />
 
@@ -108,7 +104,6 @@
                     android:id="@+id/tvBlockchainCurrency"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BTC"
                     android:textSize="16sp"
                     tools:text="BTC" />
 
@@ -131,14 +126,12 @@
                 android:id="@+id/tvFee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+ network fee ~"
                 tools:text="+ network fee ~" />
 
             <TextView
                 android:id="@+id/tvFeeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0.000005"
                 tools:text="0.000005" />
 
             <View
@@ -149,16 +142,14 @@
                 android:id="@+id/tvFeeCurrency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BTC"
                 tools:text="BTC" />
+
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/flDelimiter"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:background="@color/delimiter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -189,7 +180,7 @@
         <Button
             android:id="@+id/button2"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="46dp"
             android:layout_marginEnd="46dp"
             android:layout_marginBottom="40dp"

@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Merchant Title"
-            android:textColor="@color/text_main"
+            android:textColor="@color/textPrimary"
             android:textSize="26sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$"
-                android:textColor="@color/text_main"
+                android:textColor="@color/textPrimary"
                 android:textSize="50sp"
                 android:textStyle="bold"
                 tools:text="$" />
@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="45,5"
-                android:textColor="@color/text_main"
+                android:textColor="@color/textPrimary"
                 android:textSize="50sp"
                 android:textStyle="bold"
                 tools:text="45,5" />

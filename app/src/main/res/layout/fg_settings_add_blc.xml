@@ -14,30 +14,43 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilMerchantTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_merchant_title"
-            app:boxBackgroundColor="@android:color/transparent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etMerchantTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Merchant title" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+        <include layout="@layout/w_spinner_underlined" />
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="23dp" />
 
-        <include layout="@layout/w_spinner_underlined" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBlcAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_blc_address"
+            app:boxBackgroundColor="@android:color/transparent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBlcAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="SDFGSBVS32rte@#Trger243Rwterw3r" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="27dp" />
+
+        <ImageView
+            android:id="@+id/ibtnAddBlc"
+            android:padding="8dp"
+            android:background="?selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_big" />
 
     </LinearLayout>
 
@@ -45,7 +58,7 @@
         android:id="@+id/llBlc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,44 +86,6 @@
                 android:layout_width="1dp"
                 android:layout_height="wrap_content"
                 android:visibility="invisible" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/clAddBlc"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:paddingEnd="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/iconAdd"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvAddBlc"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_add" />
-
-                <TextView
-                    android:id="@+id/tvAddBlc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_add_blc"
-                    android:textColor="@color/textPrimary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </LinearLayout>
 
