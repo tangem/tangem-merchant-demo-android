@@ -8,7 +8,47 @@
     <string name="btn_charge">Charge</string>
     <string name="hint_merchant_title">Merchant title</string>
     <string name="hint_blc_address">Address</string>
+    <string name="spinner_hint_fiat_currency">Fiat currency</string>
+    <string name="spinner_hint_choose_blc">Choose blockchain</string>
     <string name="title_blcs">Blockchains</string>
     <string name="title_add_blc">Add Blockchain</string>
+
+    <string-array name="fiat_currencies">
+        <item>$ - Dollar US</item>
+        <item>€ - Euro</item>
+        <item>₽ - Russian Rub</item>
+    </string-array>
+
+    <string-array name="blc_names">
+        <item>Bitcoin</item>
+        <item>Ethereum</item>
+        <item>Ripple</item>
+        <item>Bitcoin Cash</item>
+        <item>Litecoin</item>
+        <item>Binance</item>
+        <item>Stellar</item>
+        <item>TRON</item>
+        <item>Cardano</item>
+        <item>Tezos</item>
+        <item>Ducatus</item>
+        <item>RSK</item>
+        <item>Matic</item>
+    </string-array>
+
+    <string-array name="blc_keys">
+        <item>BTC</item>
+        <item>ETH</item>
+        <item>XRP</item>
+        <item>BCH</item>
+        <item>LTC</item>
+        <item>BNB</item>
+        <item>XLM</item>
+        <item>TRX</item>
+        <item>ADA</item>
+        <item>XTZ</item>
+        <item>DUC</item>
+        <item>RBTC</item>
+        <item>MTX</item>
+    </string-array>
 
 </resources>

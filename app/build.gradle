@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.tangem:core:0.9.1'
     implementation 'com.tangem:sdk:0.9.1'
     implementation 'com.github.gbIxaHue:eu4d:0.4.0'
-    implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
+    implementation 'com.github.tiper:MaterialSpinner:1.4.2'
 
 //    https://github.com/Lesilva/BetterSpinner
 //    https://github.com/tiper/MaterialSpinner
