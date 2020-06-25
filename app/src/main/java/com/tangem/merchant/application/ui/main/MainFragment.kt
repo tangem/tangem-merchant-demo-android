@@ -5,7 +5,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.merchant.R
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.fg_main.*
  */
 class MainFragment : BaseFragment() {
 
-    private val mainVM: MainVM by activityViewModels()
+    private val mainVM: MainVM by viewModels()
 
     override fun getLayoutId(): Int = R.layout.fg_main
 
@@ -28,8 +29,16 @@ class MainFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupKeyboard()
+        tvFiatCurrency.text = "$"
+        mainVM.fiatValue.observe(viewLifecycleOwner, Observer { tvFiatValue.text = it })
+    }
+
+    private fun setupKeyboard() {
         keyboard.setTextSize(37f)
         keyboard.setTextColor(R.color.textPrimary)
+        keyboard.setKeyboardButtonClickedListener(mainVM.keyboardController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

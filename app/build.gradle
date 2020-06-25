@@ -54,6 +54,11 @@ dependencies {
 
     implementation 'com.tangem:core:0.9.1'
     implementation 'com.tangem:sdk:0.9.1'
-    implementation 'com.github.gbIxaHue:eu4d:0.3.8'
+    implementation 'com.github.gbIxaHue:eu4d:0.4.0'
+    implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
 
+//    https://github.com/Lesilva/BetterSpinner
+//    https://github.com/tiper/MaterialSpinner
+//    https://github.com/james602152002/FloatingLabelSpinner
+//    https://github.com/jaiselrahman/HintSpinner
 }
