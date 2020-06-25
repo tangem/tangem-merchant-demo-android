@@ -6,7 +6,8 @@ import com.tangem.merchant.application.ui.main.keyboard.KeyboardButtonEnum.*
  * Created by Anton Zhilenkov on 25/06/2020.
  */
 class NumberKeyboardController(
-    private val decimalSeparator: String
+    private val decimalSeparator: String,
+    private val decimalCount: Int
 ) : KeyboardButtonClickedListener {
 
     var onUpdate: ((String) -> Unit)? = null
@@ -41,37 +42,33 @@ class NumberKeyboardController(
     override fun onKeyboardClick(view: KeyboardButtonView, buttonCode: KeyboardButtonEnum, value: Any) {
         val digit = getDigitSign(buttonCode)
         if (digit == null) {
-            // there is a coma or eraseAction
             when (buttonCode) {
                 BUTTON_COMA -> isDecimalPart = true
-                BUTTON_CLEAR -> eraseLast()
-
+                BUTTON_CLEAR -> onErase()
             }
         } else {
-            appendDigitSign(digit)
+            onAdd(digit)
         }
         updateValue()
     }
 
-    private fun appendDigitSign(digit: Int) {
+    private fun onAdd(digit: Int) {
         if (isDecimalPart) {
+            if (decimalPart.length == decimalCount) return
+
             decimalPart = if (decimalPart == ZERO) "$digit" else "$decimalPart$digit"
         } else {
             numberPart = if (numberPart == ZERO) "$digit" else "$numberPart$digit"
         }
     }
 
-    private fun updateValue() {
-        onUpdate?.invoke(value)
-    }
-
-    override fun onRippleAnimationEnd() {
-
-    }
-
-    private fun eraseLast() {
+    private fun onErase() {
         if (value == FULL_ZERO) return
 
+        fun deleteLastSign(raw: String): String {
+            return if (raw == ZERO || raw.isEmpty()) raw
+            else raw.substring(0, raw.length - 1)
+        }
         if (isDecimalPart) {
             isDecimalPart = !(decimalPart == ZERO || decimalPart.length == 1)
             if (decimalPart == ZERO) return
@@ -83,11 +80,11 @@ class NumberKeyboardController(
 
     }
 
-    private fun deleteLastSign(raw: String): String {
-        if (raw == ZERO || raw.isEmpty()) return raw
-
-        return raw.substring(0, raw.length - 1)
+    private fun updateValue() {
+        onUpdate?.invoke(value)
     }
+
+    override fun onRippleAnimationEnd() {}
 
     private fun getDigitSign(buttonCode: KeyboardButtonEnum): Int? {
         return when (buttonCode) {

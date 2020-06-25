@@ -8,7 +8,7 @@ import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
  * Created by Anton Zhilenkov on 16/06/2020.
  */
 class MainVM : ViewModel() {
-    val keyboardController = NumberKeyboardController(",")
+    val keyboardController = NumberKeyboardController(",", 2)
     val fiatValue = MutableLiveData<String>("0,0")
 
     init {
