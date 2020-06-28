@@ -7,9 +7,11 @@
 
     <color name="main_black">#1C1C1E</color>
     <color name="background">#FFFFFF</color>
+    <color name="bg_rounded_rectangle">#F8F8FB</color>
     <color name="delimiter">#F1F1F1</color>
     <color name="editTextUnderline">#8D8D8F</color>
 
+    <color name="disabledBtnColor">#8D8D8F</color>
     <color name="textPrimary">@color/main_black</color>
     <color name="textSecondary">#737377</color>
 

@@ -5,4 +5,7 @@
     <dimen name="keyboard_button_ripple_padding">20dp</dimen>
     <dimen name="keyboard_button_text_size">40sp</dimen>
     <dimen name="keyboard_button_image_size">25sp</dimen>
+
+    <dimen name="bg_corner_radius">8dp</dimen>
+
 </resources>

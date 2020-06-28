@@ -6,103 +6,57 @@
     android:layout_height="match_parent"
     tools:context="com.tangem.merchant.application.ui.settings.SettingsFragment">
 
-    <LinearLayout
-        android:id="@+id/llMerchantSettings"
+    <include
+        android:id="@+id/spinnerLayout"
+        layout="@layout/w_spinner_underlined"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="37dp"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:gravity="center"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <include layout="@layout/w_spinner_underlined" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="23dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilBlcAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_blc_address"
-            app:boxBackgroundColor="@android:color/transparent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etBlcAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="SDFGSBVS32rte@#Trger243Rwterw3r" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="27dp" />
-
-        <ImageView
-            android:id="@+id/ibtnAddBlc"
-            android:padding="8dp"
-            android:background="?selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_big" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/llBlc"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilBlcAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/hint_blc_address"
+        app:boxBackgroundColor="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llMerchantSettings">
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLayout">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etBlcAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:orientation="horizontal">
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingTop="30dp"
+            android:paddingBottom="15dp"
+            tools:text="SDFGSBVS32rte@#Trger243Rwterw3r" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_blcs"
-                android:textColor="@color/textPrimary"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:layout_width="1dp"
-                android:layout_height="wrap_content"
-                android:visibility="invisible" />
+    <Button
+        android:id="@+id/btnAddBlc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="46dp"
+        android:layout_marginEnd="46dp"
+        android:layout_marginBottom="40dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/btn_add_blc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="16dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvBlc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/rv_blockchain_item" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

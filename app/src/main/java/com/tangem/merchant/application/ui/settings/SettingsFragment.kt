@@ -11,10 +11,13 @@ import com.tangem.merchant.application.domain.model.FiatCurrency
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
+import com.tangem.merchant.application.ui.settingsAddBlc.BlcRvAdapter
+import com.tangem.merchant.application.ui.settingsAddBlc.SpaceItemDivider
 import kotlinx.android.synthetic.main.fg_settings.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
 import ru.dev.gbixahue.eu4d.lib.android._android.views.afterTextChanged
 import ru.dev.gbixahue.eu4d.lib.android._android.views.moveCursorToEnd
+import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 
 
 /**
@@ -39,7 +42,7 @@ class SettingsFragment : BaseFragment() {
 
         initMerchantTitle()
         initSpinner()
-
+        initBlcRecycler()
     }
 
     private fun initMerchantTitle() {
@@ -74,6 +77,34 @@ class SettingsFragment : BaseFragment() {
             })
         })
     }
+
+    private fun initBlcRecycler() {
+        var isDeleting = false
+        val adapter = BlcRvAdapter { aPos, lPos, blc ->
+            isDeleting = true
+            mainVM.deleteBlcItem(blc)
+            val adapter = rvBlc.adapter as? BlcRvAdapter ?: return@BlcRvAdapter
+
+            adapter.removeItem(aPos)
+            adapter.notifyItemRemoved(aPos)
+        }
+        rvBlc.addItemDecoration(SpaceItemDivider(8))
+        rvBlc.adapter = adapter
+        rvBlc.setHasFixedSize(true)
+
+        mainVM.getBlcItemList().observe(viewLifecycleOwner, Observer { blcList ->
+            if (isDeleting) {
+                isDeleting = false
+                return@Observer
+            }
+
+            Log.d(this, "getBlcItemList size: ${blcList.size}")
+//            (rvBlc.parent as ViewGroup).beginDelayedTransition()
+            adapter.setItemList(blcList)
+            adapter.notifyDataSetChanged()
+        })
+    }
+
 
 }
 

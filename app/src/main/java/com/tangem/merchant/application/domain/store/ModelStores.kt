@@ -2,7 +2,7 @@ package com.tangem.merchant.application.domain.store
 
 import com.google.gson.reflect.TypeToken
 import com.tangem.merchant.application.AppMerchant
-import com.tangem.merchant.application.domain.model.BlockchainModel
+import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.Merchant
 
 /**
@@ -13,11 +13,11 @@ class MerchantStore : BaseStore<Merchant>(AppMerchant.appInstance.sharedPreferen
     override fun fromJson(json: String): Merchant = gson.fromJson(json, Merchant::class.java)
 }
 
-class BlcListStore : BaseStore<List<BlockchainModel>>(AppMerchant.appInstance.sharedPreferences(), "blcList") {
+class BlcListStore : BaseStore<List<BlockchainItem>>(AppMerchant.appInstance.sharedPreferences(), "blcList") {
 
-    override fun getDefault(): List<BlockchainModel> = mutableListOf()
+    override fun getDefault(): List<BlockchainItem> = mutableListOf()
 
-    override fun fromJson(json: String): List<BlockchainModel> {
-        return gson.fromJson<List<BlockchainModel>>(json, object : TypeToken<List<BlockchainModel>>() {}.type)
+    override fun fromJson(json: String): List<BlockchainItem> {
+        return gson.fromJson<List<BlockchainItem>>(json, object : TypeToken<List<BlockchainItem>>() {}.type)
     }
 }
