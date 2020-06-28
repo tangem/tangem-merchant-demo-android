@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import com.tangem.merchant.R
+import ru.dev.gbixahue.eu4d.lib.android._android.views.colorFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
 
 /**
@@ -81,7 +82,12 @@ open class BaseHintAdapter<T>(
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout: View = convertView ?: parent.inflate(R.layout.sp_item_dropdown)
         val textView = layout.findViewById<TextView>(R.id.tvDropDownItem)
-        textView.text = if (hint != null && position == 0) hint else getLabelFor(itemList[position - 1])
+        if (hint != null && position == 0) {
+            textView.text = hint
+            textView.setTextColor(textView.colorFrom(R.color.textSecondary))
+        } else {
+            textView.text = getLabelFor(itemList[position - 1])
+        }
 
         layout.setOnTouchListener { _, _ ->
             hasChanges = true
@@ -95,10 +101,13 @@ open class BaseHintAdapter<T>(
             spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val adapter = spinner.adapter as? BaseHintAdapter<T> ?: return
-                    val item: T? = adapter.getItem(position) as? T ?: return
-
-                    item?.let { listener(it, position) }
                     adapter.hasChanges = position != 0
+
+                    if (position != 0) {
+                        val itemPosition = position - 1
+                        val item: T? = adapter.getItem(itemPosition) as? T
+                        item?.let { listener(it, position) }
+                    }
                     adapter.notifyDataSetChanged()
                 }
 

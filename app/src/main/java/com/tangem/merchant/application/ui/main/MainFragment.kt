@@ -43,14 +43,12 @@ class MainFragment : BaseFragment() {
     }
 
     private fun listenMerchantChanges() {
-        mainVM.merchant.observe(viewLifecycleOwner, Observer {
-            tvMerchantTitle.text = it.name
-            tvFiatCurrency.text = it.currency.currencySymbol
-        })
+        mainVM.getMerchantName().observe(viewLifecycleOwner, Observer { tvMerchantTitle.text = it })
+        mainVM.getMerchantCurrencyCode().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it })
     }
 
     private fun listenNumberKeyboardChanges() {
-        mainVM.fiatValue.observe(viewLifecycleOwner, Observer { tvFiatValue.text = it })
+        mainVM.getFiatValue().observe(viewLifecycleOwner, Observer { tvFiatValue.text = it })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

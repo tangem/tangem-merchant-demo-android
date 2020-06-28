@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.model.FiatCurrency
 import com.tangem.merchant.application.ui.base.BaseFragment
@@ -12,7 +13,8 @@ import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
 import kotlinx.android.synthetic.main.fg_settings.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
-import ru.dev.gbixahue.eu4d.lib.kotlin.currency.CurrencyCodeConverter
+import ru.dev.gbixahue.eu4d.lib.android._android.views.afterTextChanged
+import ru.dev.gbixahue.eu4d.lib.android._android.views.moveCursorToEnd
 
 
 /**
@@ -35,22 +37,50 @@ class SettingsFragment : BaseFragment() {
 
         clAddBlc.setOnClickListener { navigateTo(R.id.nav_screen_settings_add_blc) }
 
-        val currencyCodeList = resources.getStringArray(R.array.fiat_currencies).toMutableList()
-        val converter = CurrencyCodeConverter()
-        val fiatCurrencyList = currencyCodeList.map { FiatCurrency(converter.convert(it), it) }.toMutableList()
-        val adapter = FiatCurrencySpinnerAdapter(requireContext(), fiatCurrencyList)
-        spinner.adapter = adapter
-        BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
-            settingsVM.fiatIndexPosition = position
-        }
-        spinner.setSelection(settingsVM.fiatIndexPosition, true)
+        initMerchantTitle()
+        initSpinner()
+
     }
+
+    private fun initMerchantTitle() {
+        val merchantTitleWatcher = etMerchantTitle.afterTextChanged { mainVM.merchantNameChanged(it) }
+
+        mainVM.getMerchantName().observe(viewLifecycleOwner, Observer {
+            if (etMerchantTitle.text.toString() == it) return@Observer
+
+            etMerchantTitle.removeTextChangedListener(merchantTitleWatcher)
+            etMerchantTitle.setText(it)
+            if (etMerchantTitle.hasFocus()) etMerchantTitle.moveCursorToEnd()
+            etMerchantTitle.addTextChangedListener(merchantTitleWatcher)
+        })
+    }
+
+
+    private fun initSpinner() {
+        settingsVM.currencyCodesObtained(resources.getStringArray(R.array.fiat_currencies).toMutableList())
+        settingsVM.getCurrencyList().observe(viewLifecycleOwner, Observer { fiatCurrencyList ->
+            val adapter = FiatCurrencySpinnerAdapter(requireContext(), fiatCurrencyList)
+            spinner.adapter = adapter
+            BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
+                settingsVM.spinnerPosition = position
+                mainVM.fiatCurrencyCodeChanged(fiatCurrency)
+            }
+
+            mainVM.getMerchantCurrencyCode().observe(viewLifecycleOwner, Observer { code ->
+                val foundFiatCurrency = fiatCurrencyList.firstOrNull { it.code == code } ?: return@Observer
+
+                settingsVM.spinnerPosition = fiatCurrencyList.indexOf(foundFiatCurrency) + 1
+                spinner.setSelection(settingsVM.spinnerPosition, true)
+            })
+        })
+    }
+
 }
 
 class FiatCurrencySpinnerAdapter(
     context: Context,
     itemList: MutableList<FiatCurrency>
 ) : BaseHintAdapter<FiatCurrency>(context, itemList, R.string.spinner_hint_fiat_currency) {
-    override fun getLabelFor(item: FiatCurrency): String = "${item.currencySymbol} - ${item.name}"
+    override fun getLabelFor(item: FiatCurrency): String = "${item.code} - ${item.name}"
 }
 
