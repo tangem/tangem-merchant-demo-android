@@ -7,8 +7,4 @@ import androidx.lifecycle.ViewModel
  */
 class SettingsVM : ViewModel() {
     var fiatIndexPosition: Int = 0
-
-    fun fiatCurrencyChanged(item: String, position: Int) {
-        fiatIndexPosition = position
-    }
 }

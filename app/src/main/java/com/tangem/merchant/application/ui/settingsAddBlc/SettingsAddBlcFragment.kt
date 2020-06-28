@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.tangem.merchant.R
 import com.tangem.merchant.application.ui.base.BaseFragment
-import com.tangem.merchant.application.ui.base.adapter.spinner.DefaultItemSpinnerAdapter
+import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
 
 class SettingsAddBlcFragment : BaseFragment() {
@@ -22,9 +22,12 @@ class SettingsAddBlcFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val list = resources.getStringArray(R.array.blc_names).toMutableList()
-        list.add(getString(R.string.spinner_hint_choose_blc))
-        DefaultItemSpinnerAdapter(list, spinner, listener = { item, position ->
-//            settingsAddBlcVM.fiatCurrencyChanged(item, position)
-        })
+        val adapter = BaseHintAdapter(requireContext(), list, R.string.spinner_hint_choose_blc)
+        spinner.adapter = adapter
+        BaseHintAdapter.setItemSelectedListener<String>(spinner) { blcName, position ->
+            settingsAddBlcVM.blcIndexPosition = position
+        }
+        spinner.setSelection(settingsAddBlcVM.blcIndexPosition, true)
     }
+
 }

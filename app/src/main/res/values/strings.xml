@@ -14,9 +14,9 @@
     <string name="title_add_blc">Add Blockchain</string>
 
     <string-array name="fiat_currencies">
-        <item>$ - Dollar US</item>
-        <item>€ - Euro</item>
-        <item>₽ - Russian Rub</item>
+        <item>USD</item>
+        <item>EUR</item>
+        <item>RUB</item>
     </string-array>
 
     <string-array name="blc_names">
