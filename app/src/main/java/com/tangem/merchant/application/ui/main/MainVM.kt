@@ -7,11 +7,15 @@ import com.tangem.merchant.application.domain.model.Merchant
 import com.tangem.merchant.application.domain.store.MerchantStore
 import com.tangem.merchant.application.ui.base.viewModel.BlockchainListVM
 import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
+import com.tangem.merchant.common.AppDataChecker
+import com.tangem.merchant.common.FirstLaunchChecker
 
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
  */
 class MainVM : BlockchainListVM() {
+    var startFromSettingsScreen = false
+
     val keyboardController = NumberKeyboardController(DECIMAL_SEPARATOR, 2)
 
     private val fiatValueLD = MutableLiveData<String>("0${DECIMAL_SEPARATOR}0")
@@ -28,9 +32,14 @@ class MainVM : BlockchainListVM() {
     init {
         merchantModel = merchantStore.restore()
         merchantNameLD.value = merchantModel.name
-        merchantCurrencyCodeLD.value = merchantModel.fiatCurrency.code
+        merchantCurrencyCodeLD.value = merchantModel.fiatCurrency?.code
 
         keyboardController.onUpdate = { fiatValueLD.postValue(it) }
+    }
+
+    fun isDataEnoughForLaunch(): Boolean {
+        if (FirstLaunchChecker().isFirstLaunch()) return false
+        return AppDataChecker().isDataEnough()
     }
 
     fun merchantNameChanged(name: String) {

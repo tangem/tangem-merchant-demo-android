@@ -10,6 +10,7 @@ import com.google.gson.Gson
 interface Store<M> {
     fun save(value: M)
     fun restore(): M
+    fun has():Boolean
 }
 
 abstract class BaseStore<M>(
@@ -26,6 +27,8 @@ abstract class BaseStore<M>(
         val json = sp.getString(key, toJson(getDefault()))
         return fromJson(json!!)
     }
+
+    override fun has(): Boolean = sp.contains(key)
 
     protected open fun toJson(value: M): String = gson.toJson(value)
 

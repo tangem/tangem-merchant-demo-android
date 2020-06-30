@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_main)
 
+        mainVM.startFromSettingsScreen = !mainVM.isDataEnoughForLaunch()
         setupToolbar()
         setupNavController()
     }
@@ -37,8 +38,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavController() {
-        val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment ?: return
-        val navController = host.navController
+        val navHost = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment ?: return
+        val navController = navHost.navController
+
+        val graph = navController.navInflater.inflate(R.navigation.navigation)
+        graph.startDestination = if (mainVM.startFromSettingsScreen) R.id.nav_screen_settings else R.id.nav_entry_point
+
+        navController.graph = graph
+
         appBarConfiguration = AppBarConfiguration(navController.graph)
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener(NavDestinationLogger(this.weakReference()))

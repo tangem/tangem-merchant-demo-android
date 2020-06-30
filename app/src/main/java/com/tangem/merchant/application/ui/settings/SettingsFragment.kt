@@ -1,6 +1,7 @@
 package com.tangem.merchant.application.ui.settings
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -8,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.model.FiatCurrency
+import com.tangem.merchant.application.ui.MainActivity
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
@@ -15,8 +17,10 @@ import com.tangem.merchant.application.ui.settingsAddBlc.BlcRvAdapter
 import com.tangem.merchant.application.ui.settingsAddBlc.SpaceItemDivider
 import kotlinx.android.synthetic.main.fg_settings.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
+import ru.dev.gbixahue.eu4d.lib.android._android.components.dimenFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.afterTextChanged
 import ru.dev.gbixahue.eu4d.lib.android._android.views.moveCursorToEnd
+import ru.dev.gbixahue.eu4d.lib.android._android.views.show
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 
 
@@ -43,10 +47,14 @@ class SettingsFragment : BaseFragment() {
         initMerchantTitle()
         initSpinner()
         initBlcRecycler()
+        initLaunchButton()
     }
 
     private fun initMerchantTitle() {
-        val merchantTitleWatcher = etMerchantTitle.afterTextChanged { mainVM.merchantNameChanged(it) }
+        val merchantTitleWatcher = etMerchantTitle.afterTextChanged {
+            mainVM.merchantNameChanged(it)
+            updateLaunchButtonState()
+        }
 
         mainVM.getMerchantName().observe(viewLifecycleOwner, Observer {
             if (etMerchantTitle.text.toString() == it) return@Observer
@@ -58,7 +66,6 @@ class SettingsFragment : BaseFragment() {
         })
     }
 
-
     private fun initSpinner() {
         settingsVM.currencyCodesObtained(resources.getStringArray(R.array.fiat_currencies).toMutableList())
         settingsVM.getCurrencyList().observe(viewLifecycleOwner, Observer { fiatCurrencyList ->
@@ -67,6 +74,7 @@ class SettingsFragment : BaseFragment() {
             BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
                 settingsVM.spinnerPosition = position
                 mainVM.fiatCurrencyCodeChanged(fiatCurrency)
+                updateLaunchButtonState()
             }
 
             mainVM.getMerchantCurrencyCode().observe(viewLifecycleOwner, Observer { code ->
@@ -86,11 +94,12 @@ class SettingsFragment : BaseFragment() {
             val adapter = rvBlc.adapter as? BlcRvAdapter ?: return@BlcRvAdapter
 
             adapter.removeItem(aPos)
-            adapter.notifyItemRemoved(aPos)
+            adapter.notifyDataSetChanged()
+            rvBlc.requestLayout()
+            updateLaunchButtonState()
         }
         rvBlc.addItemDecoration(SpaceItemDivider(8))
         rvBlc.adapter = adapter
-        rvBlc.setHasFixedSize(true)
 
         mainVM.getBlcItemList().observe(viewLifecycleOwner, Observer { blcList ->
             if (isDeleting) {
@@ -99,10 +108,27 @@ class SettingsFragment : BaseFragment() {
             }
 
             Log.d(this, "getBlcItemList size: ${blcList.size}")
-//            (rvBlc.parent as ViewGroup).beginDelayedTransition()
             adapter.setItemList(blcList)
             adapter.notifyDataSetChanged()
+            updateLaunchButtonState()
         })
+    }
+
+    private fun initLaunchButton() {
+        btnLaunchApp.show(mainVM.startFromSettingsScreen)
+        val bottomPadding = if (!mainVM.startFromSettingsScreen) 0
+        else requireContext().dimenFrom(R.dimen.rv_blockchain_bottom_paddin).toInt()
+
+        rvBlc.setPadding(0, 0, 0, bottomPadding)
+        btnLaunchApp.setOnClickListener {
+            startActivity(Intent(requireContext(), MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+        }
+    }
+
+    private fun updateLaunchButtonState() {
+        btnLaunchApp.isEnabled = mainVM.isDataEnoughForLaunch()
     }
 
 

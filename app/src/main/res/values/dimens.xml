@@ -7,5 +7,5 @@
     <dimen name="keyboard_button_image_size">25sp</dimen>
 
     <dimen name="bg_corner_radius">8dp</dimen>
-
+    <dimen name="rv_blockchain_bottom_paddin">100dp</dimen>
 </resources>

@@ -7,6 +7,7 @@
 
     <string name="btn_charge">Charge</string>
     <string name="btn_add_blc">Add</string>
+    <string name="btn_launch">Launch</string>
     <string name="hint_merchant_title">Merchant title</string>
     <string name="hint_blc_address">Address</string>
     <string name="spinner_hint_fiat_currency">Fiat currency</string>

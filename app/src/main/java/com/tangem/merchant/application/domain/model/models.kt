@@ -3,9 +3,9 @@ package com.tangem.merchant.application.domain.model
 /**
  * Created by Anton Zhilenkov on 26/06/2020.
  */
-data class Merchant(val name: String, val fiatCurrency: FiatCurrency) {
+data class Merchant(val name: String, val fiatCurrency: FiatCurrency?) {
     companion object {
-        fun default(): Merchant = Merchant("John Doe", FiatCurrency("", ""))
+        fun default(): Merchant = Merchant("", null)
     }
 }
 
