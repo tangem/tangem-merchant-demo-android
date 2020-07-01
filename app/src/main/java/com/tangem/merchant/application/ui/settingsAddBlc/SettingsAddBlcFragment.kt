@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.model.Blockchain
 import com.tangem.merchant.application.ui.base.BaseFragment
@@ -62,6 +63,7 @@ class SettingsAddBlcFragment : BaseFragment() {
     private fun initAddBlcButton() {
         btnAddBlc.setOnClickListener {
             settingsAddBlcVM.onAddBlcItem(mainVM)
+            Navigation.findNavController(requireView()).popBackStack()
         }
         settingsAddBlcVM.isAddBlcButtonEnabled().observe(viewLifecycleOwner, Observer {
             btnAddBlc.isEnabled = it
