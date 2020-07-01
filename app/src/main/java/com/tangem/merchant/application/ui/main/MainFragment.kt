@@ -1,17 +1,20 @@
 package com.tangem.merchant.application.ui.main
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.merchant.R
+import com.tangem.merchant.application.domain.model.Blockchain
+import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fg_main.*
+import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
 
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
@@ -31,7 +34,7 @@ class MainFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupKeyboard()
-
+        setupBlcSpinner()
         listenMerchantChanges()
         listenNumberKeyboardChanges()
     }
@@ -40,6 +43,25 @@ class MainFragment : BaseFragment() {
         keyboard.setTextSize(37f)
         keyboard.setTextColor(R.color.textPrimary)
         keyboard.setKeyboardButtonClickedListener(mainVM.keyboardController)
+    }
+
+    private fun setupBlcSpinner() {
+        mainVM.getBlcItemList().observe(viewLifecycleOwner, Observer { blcList ->
+            spBlockchain.adapter = BlcSpinnerAdapter(blcList)
+            spBlockchain.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    mainVM.blcItemChanged(blcList[position])
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+            mainVM.getSelectedBlcItem().observe(viewLifecycleOwner, Observer { blcItem ->
+                if (blcItem.blockchain == Blockchain.Unknown) return@Observer
+
+                spBlockchain.setSelection(blcList.indexOf(blcItem))
+            })
+        })
     }
 
     private fun listenMerchantChanges() {
@@ -59,4 +81,30 @@ class MainFragment : BaseFragment() {
         val navController = findNavController(this)
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
+}
+
+class BlcSpinnerAdapter(
+    private val itemList: MutableList<BlockchainItem>
+) : BaseAdapter() {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view: TextView =
+            convertView as? TextView ?: parent.inflate(android.R.layout.simple_spinner_item)
+
+        view.text = itemList[position].blockchain.fullName
+        return view
+    }
+
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view: TextView = convertView as? TextView
+            ?: parent.inflate(android.R.layout.simple_spinner_dropdown_item)
+
+        view.text = itemList[position].blockchain.fullName
+        return view
+    }
+
+    override fun getItem(position: Int): Any = itemList[position]
+
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    override fun getCount(): Int = itemList.size
 }

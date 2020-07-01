@@ -14,6 +14,7 @@
     <string name="spinner_hint_choose_blc">Choose blockchain</string>
     <string name="title_blcs">Blockchains</string>
     <string name="title_add_blc">Add Blockchain</string>
+    <string name="network_fee">+ network fee</string>
 
     <string-array name="fiat_currencies">
         <item>USD</item>
