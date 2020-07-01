@@ -9,12 +9,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
+import com.tangem.TangemSdk
+import com.tangem.blockchain.common.Blockchain
+import com.tangem.blockchain.extensions.Signer
 import com.tangem.merchant.R
-import com.tangem.merchant.application.domain.model.Blockchain
+import com.tangem.merchant.application.domain.charge.ChargeSession
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.BaseFragment
+import com.tangem.tangem_sdk_new.extensions.init
 import kotlinx.android.synthetic.main.fg_main.*
 import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
+import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
+
 
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
@@ -37,6 +43,7 @@ class MainFragment : BaseFragment() {
         setupBlcSpinner()
         listenMerchantChanges()
         listenNumberKeyboardChanges()
+        initChargeButton()
     }
 
     private fun setupKeyboard() {
@@ -66,11 +73,20 @@ class MainFragment : BaseFragment() {
 
     private fun listenMerchantChanges() {
         mainVM.getMerchantName().observe(viewLifecycleOwner, Observer { tvMerchantTitle.text = it })
-        mainVM.getMerchantCurrencyCode().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it })
+        mainVM.getMerchantCurrencySymbol().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it })
     }
 
     private fun listenNumberKeyboardChanges() {
-        mainVM.getFiatValue().observe(viewLifecycleOwner, Observer { tvFiatValue.text = it })
+        mainVM.getFiatValue().observe(viewLifecycleOwner, Observer { tvFiatValue.setText(it.localizedValue) })
+    }
+
+    private fun initChargeButton() {
+        btnCharge.setOnClickListener {
+            val sdk = TangemSdk.init(requireActivity())
+            sdk.startSessionWithRunnable(ChargeSession(mainVM.chargeData, Signer(sdk))) {
+                Log.d(this, "the charge session complete")
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

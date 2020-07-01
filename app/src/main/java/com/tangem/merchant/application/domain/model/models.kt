@@ -1,5 +1,10 @@
 package com.tangem.merchant.application.domain.model
 
+import com.tangem.blockchain.common.Blockchain
+import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.*
+
 /**
  * Created by Anton Zhilenkov on 26/06/2020.
  */
@@ -9,29 +14,34 @@ data class Merchant(val name: String, val fiatCurrency: FiatCurrency?) {
     }
 }
 
-data class FiatCurrency(val name: String, val code: String)
-
 data class BlockchainItem(val blockchain: Blockchain, val address: String)
 
+data class FiatCurrency(val code: String, val symbol: String)
 
-// Temporary enum
-enum class Blockchain(
-    val id: String,
-    val currency: String,
-    val fullName: String
+data class FiatValue(
+    val stringValue: String,
+    val localizedValue: String,
+    val value: BigDecimal
 ) {
-    Unknown("", "", ""),
-    Bitcoin("BTC", "BTC", "Bitcoin"),
-    BitcoinTestnet("BTC/test", "BTCt", "Bitcoin Testnet"),
-    BitcoinCash("BCH", "BCH", "Bitcoin Cash"),
-    Litecoin("LTC", "LTC", "Litecoin"),
-    Ducatus("DUC", "DUC", "Ducatus"),
-    Ethereum("ETH", "ETH", "Ethereum"),
-    RSK("RSK", "RBTC", "RSK"),
-    Cardano("CARDANO", "ADA", "Cardano"),
-    XRP("XRP", "XRP", "XRP Ledger"),
-    Binance("BINANCE", "BNB", "Binance"),
-    BinanceTestnet("BINANCE/test", "BNBt", "Binance"),
-    Stellar("XLM", "XLM", "Stellar"),
-    Tezos("TEZOS", "XTZ", "Tezos");
+    companion object {
+        fun create(strValue: String, currencyCode: String): FiatValue {
+            val doubleValue = toBigDecimal(strValue)
+            return FiatValue(strValue, localizeValue(doubleValue, currencyCode), doubleValue)
+        }
+
+        private fun toBigDecimal(value: String): BigDecimal {
+            val scaled = BigDecimal(value).setScale(2, BigDecimal.ROUND_FLOOR)
+            return scaled.divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
+        }
+
+        private fun localizeValue(value: BigDecimal, currencyCode: String): String {
+            val formatter = NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance(currencyCode) }
+            return formatter.format(value)
+        }
+    }
 }
+
+data class ChargeData(
+    val blcItem: BlockchainItem,
+    val priceTag: BigDecimal
+)

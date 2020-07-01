@@ -1,7 +1,7 @@
 package com.tangem.merchant.application.domain.store
 
+import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.AppMerchant
-import com.tangem.merchant.application.domain.model.Blockchain
 import com.tangem.merchant.application.domain.model.BlockchainItem
 
 /**

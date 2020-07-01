@@ -2,7 +2,7 @@ package com.tangem.merchant.application.ui.settingsAddBlc
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.tangem.merchant.application.domain.model.Blockchain
+import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.viewModel.BlockchainListVM
 import com.tangem.merchant.application.ui.main.MainVM

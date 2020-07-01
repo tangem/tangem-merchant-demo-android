@@ -73,12 +73,12 @@ class SettingsFragment : BaseFragment() {
             spinner.adapter = adapter
             BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
                 settingsVM.spinnerPosition = position
-                mainVM.fiatCurrencyCodeChanged(fiatCurrency)
+                mainVM.fiatCurrencyChanged(fiatCurrency)
                 updateLaunchButtonState()
             }
 
-            mainVM.getMerchantCurrencyCode().observe(viewLifecycleOwner, Observer { code ->
-                val foundFiatCurrency = fiatCurrencyList.firstOrNull { it.code == code } ?: return@Observer
+            mainVM.getMerchantCurrencySymbol().observe(viewLifecycleOwner, Observer { code ->
+                val foundFiatCurrency = fiatCurrencyList.firstOrNull { it.symbol == code } ?: return@Observer
 
                 settingsVM.spinnerPosition = fiatCurrencyList.indexOf(foundFiatCurrency) + 1
                 spinner.setSelection(settingsVM.spinnerPosition, true)
@@ -138,6 +138,6 @@ class FiatCurrencySpinnerAdapter(
     context: Context,
     itemList: MutableList<FiatCurrency>
 ) : BaseHintAdapter<FiatCurrency>(context, itemList, R.string.spinner_hint_fiat_currency) {
-    override fun getLabelFor(item: FiatCurrency): String = "${item.code} - ${item.name}"
+    override fun getLabelFor(item: FiatCurrency): String = "${item.symbol} - ${item.code}"
 }
 

@@ -108,6 +108,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingBottom="20dp"
+            android:visibility="invisible"
             app:lp_keyboard_button_text="," />
 
         <com.tangem.merchant.application.ui.main.keyboard.KeyboardButtonView
