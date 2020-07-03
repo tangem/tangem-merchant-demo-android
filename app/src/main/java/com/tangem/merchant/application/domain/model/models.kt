@@ -42,5 +42,5 @@ data class FiatValue(
 
 data class ChargeData(
     val blcItem: BlockchainItem,
-    val priceTag: BigDecimal
+    val writeOfValue: BigDecimal
 )

@@ -38,7 +38,7 @@ class MainVM : BlcItemListVM() {
 
     private val coinMarket = CoinMarket() { errorMessageSLE.postValue(it) }
 
-    private var chargeData = ChargeData(BlockchainItem(Blockchain.Unknown, ""), initialFiatValue.toBigDecimal())
+    private var chargeData = ChargeData(BlockchainItem(Blockchain.Unknown, ""), BigDecimal.ZERO)
 
     private var merchant: Merchant
     private val merchantStore = MerchantStore()
@@ -46,7 +46,7 @@ class MainVM : BlcItemListVM() {
     private val merchantFiatCurrencyLD = MutableLiveData<FiatCurrency>()
 
     private val fiatValueLD = MutableLiveData<FiatValue>()
-    private val convertedFiatValueLD = MutableLiveData<BigDecimal>(0.toBigDecimal())
+    private val convertedFiatValueLD = MutableLiveData<BigDecimal>(BigDecimal.ZERO)
     private val fiatCurrencyListLD = MutableLiveData<List<FiatCurrency>>(listOf())
     private val fiatCurrencyListStore = FiatCurrencyListStore()
 
@@ -74,7 +74,6 @@ class MainVM : BlcItemListVM() {
         fiatValueLD.value = createFiatValue(merchant)
         initKeyboardController()
         keyboardController.onUpdate = { fiatValue ->
-            chargeData = chargeData.copy(priceTag = fiatValue.value)
             fiatValueLD.value = fiatValue
         }
     }
@@ -144,7 +143,8 @@ class MainVM : BlcItemListVM() {
     fun calculateConversion() {
         val fiatValue = fiatValueLD.value ?: return
         if (fiatValue.stringValue == "0") {
-            convertedFiatValueLD.postValue(0.toBigDecimal())
+            convertedFiatValueLD.postValue(BigDecimal.ZERO)
+            chargeData = chargeData.copy(writeOfValue = BigDecimal.ZERO)
             return
         }
 
@@ -166,7 +166,10 @@ class MainVM : BlcItemListVM() {
                 blcItem.blockchain,
                 currency,
                 { uiIsEnabledLD.postValue(it) },
-                { convertedFiatValueLD.postValue(it) }
+                {
+                    chargeData = chargeData.copy(writeOfValue = it)
+                    convertedFiatValueLD.postValue(it)
+                }
             )
         }
     }

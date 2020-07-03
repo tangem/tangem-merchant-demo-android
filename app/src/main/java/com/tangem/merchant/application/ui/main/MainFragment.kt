@@ -11,7 +11,6 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
-import com.tangem.blockchain.extensions.Signer
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.charge.ChargeSession
 import com.tangem.merchant.application.domain.error.AppError
@@ -106,7 +105,7 @@ class MainFragment : BaseFragment() {
     private fun initChargeButton() {
         btnCharge.setOnClickListener {
             val sdk = TangemSdk.init(requireActivity())
-            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData(), Signer(sdk))) {
+            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData())) {
                 Log.d(this, "the charge session complete")
             }
         }
