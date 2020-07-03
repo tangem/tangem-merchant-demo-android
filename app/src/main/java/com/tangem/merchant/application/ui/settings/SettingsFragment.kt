@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.tangem.merchant.R
-import com.tangem.merchant.application.domain.model.FiatCurrency
+import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.ui.MainActivity
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
@@ -67,8 +67,7 @@ class SettingsFragment : BaseFragment() {
     }
 
     private fun initSpinner() {
-        settingsVM.currencyCodesObtained(resources.getStringArray(R.array.fiat_currencies).toMutableList())
-        settingsVM.getCurrencyList().observe(viewLifecycleOwner, Observer { fiatCurrencyList ->
+        mainVM.getFiatCurrencyList().observe(viewLifecycleOwner, Observer { fiatCurrencyList ->
             val adapter = FiatCurrencySpinnerAdapter(requireContext(), fiatCurrencyList)
             spinner.adapter = adapter
             BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
@@ -77,10 +76,10 @@ class SettingsFragment : BaseFragment() {
                 updateLaunchButtonState()
             }
 
-            mainVM.getMerchantCurrencySymbol().observe(viewLifecycleOwner, Observer { code ->
-                val foundFiatCurrency = fiatCurrencyList.firstOrNull { it.symbol == code } ?: return@Observer
+            mainVM.getMerchantFiatCurrency().observe(viewLifecycleOwner, Observer { fiatCurrency ->
+                val found = fiatCurrencyList.firstOrNull { it == fiatCurrency } ?: return@Observer
 
-                settingsVM.spinnerPosition = fiatCurrencyList.indexOf(foundFiatCurrency) + 1
+                settingsVM.spinnerPosition = fiatCurrencyList.indexOf(found) + 1
                 spinner.setSelection(settingsVM.spinnerPosition, true)
             })
         })
@@ -136,8 +135,8 @@ class SettingsFragment : BaseFragment() {
 
 class FiatCurrencySpinnerAdapter(
     context: Context,
-    itemList: MutableList<FiatCurrency>
-) : BaseHintAdapter<FiatCurrency>(context, itemList, R.string.spinner_hint_fiat_currency) {
-    override fun getLabelFor(item: FiatCurrency): String = "${item.symbol} - ${item.code}"
+    itemList: List<FiatCurrency>
+) : BaseHintAdapter<FiatCurrency>(context, itemList.toMutableList(), R.string.spinner_hint_fiat_currency) {
+    override fun getLabelFor(item: FiatCurrency): String = "${item.sign} - ${item.symbol}"
 }
 

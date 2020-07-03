@@ -1,6 +1,7 @@
 package com.tangem.merchant.application.domain.model
 
 import com.tangem.blockchain.common.Blockchain
+import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
@@ -15,8 +16,6 @@ data class Merchant(val name: String, val fiatCurrency: FiatCurrency?) {
 }
 
 data class BlockchainItem(val blockchain: Blockchain, val address: String)
-
-data class FiatCurrency(val code: String, val symbol: String)
 
 data class FiatValue(
     val stringValue: String,

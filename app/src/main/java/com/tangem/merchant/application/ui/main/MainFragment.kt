@@ -40,9 +40,12 @@ class MainFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupKeyboard()
-        setupBlcSpinner()
+        listenBlcItemSpinnerChanges()
         listenMerchantChanges()
         listenNumberKeyboardChanges()
+        listenConversionChanges()
+        listenLockUiStateChanges()
+        listenErrors()
         initChargeButton()
     }
 
@@ -52,41 +55,70 @@ class MainFragment : BaseFragment() {
         keyboard.setKeyboardButtonClickedListener(mainVM.keyboardController)
     }
 
-    private fun setupBlcSpinner() {
+    private fun listenBlcItemSpinnerChanges() {
         mainVM.getBlcItemList().observe(viewLifecycleOwner, Observer { blcList ->
             spBlockchain.adapter = BlcSpinnerAdapter(blcList)
             spBlockchain.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     mainVM.blcItemChanged(blcList[position])
+                    mainVM.calculateConversion()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
 
+            //restore
             mainVM.getSelectedBlcItem().observe(viewLifecycleOwner, Observer { blcItem ->
                 if (blcItem.blockchain == Blockchain.Unknown) return@Observer
 
                 spBlockchain.setSelection(blcList.indexOf(blcItem))
+                tvBlockchainCurrency.text = blcItem.blockchain.id
             })
         })
     }
 
     private fun listenMerchantChanges() {
         mainVM.getMerchantName().observe(viewLifecycleOwner, Observer { tvMerchantTitle.text = it })
-        mainVM.getMerchantCurrencySymbol().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it })
+//        mainVM.getMerchantFiatCurrency().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it.sign })
     }
 
     private fun listenNumberKeyboardChanges() {
-        mainVM.getFiatValue().observe(viewLifecycleOwner, Observer { tvFiatValue.setText(it.localizedValue) })
+        mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
+            tvFiatValue.text = it.localizedValue
+            mainVM.calculateConversion()
+        })
+    }
+
+    private fun listenConversionChanges() {
+        mainVM.getConvertedFiatValue().observe(viewLifecycleOwner, Observer {
+            tvBlockchainValue.text = it.toString()
+        })
+    }
+
+    private fun listenLockUiStateChanges() {
+        mainVM.getUiLockState().observe(viewLifecycleOwner, Observer {
+            tvBlockchainValue.isEnabled = it
+            btnCharge.isEnabled = it
+        })
     }
 
     private fun initChargeButton() {
         btnCharge.setOnClickListener {
             val sdk = TangemSdk.init(requireActivity())
-            sdk.startSessionWithRunnable(ChargeSession(mainVM.chargeData, Signer(sdk))) {
+            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData(), Signer(sdk))) {
                 Log.d(this, "the charge session complete")
             }
         }
+    }
+
+    private fun listenErrors() {
+        mainVM.errorMessageSLE.observe(viewLifecycleOwner, Observer {
+            when {
+                it.message != null -> showSnackbar(it.message)
+                it.throwable != null -> showSnackbar(it.throwable.toString())
+                it.messageId != null -> showSnackbar(it.messageId)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -103,8 +135,7 @@ class BlcSpinnerAdapter(
     private val itemList: MutableList<BlockchainItem>
 ) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view: TextView =
-            convertView as? TextView ?: parent.inflate(android.R.layout.simple_spinner_item)
+        val view: TextView = convertView as? TextView ?: parent.inflate(android.R.layout.simple_spinner_item)
 
         view.text = itemList[position].blockchain.fullName
         return view

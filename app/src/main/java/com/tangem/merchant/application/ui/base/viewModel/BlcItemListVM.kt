@@ -9,7 +9,7 @@ import com.tangem.merchant.application.domain.store.BlcListStore
 /**
  * Created by Anton Zhilenkov on 29/06/2020.
  */
-open class BlockchainListVM : ViewModel() {
+open class BlcItemListVM : ViewModel() {
     protected val blcItemListLD = MutableLiveData<MutableList<BlockchainItem>>()
     protected val blcListStore = BlcListStore()
 
@@ -23,7 +23,7 @@ open class BlockchainListVM : ViewModel() {
         blcItemListLD.value = blcListStore.restore().toMutableList()
     }
 
-    fun addBlcItem(item: BlockchainItem){
+    fun addBlcItem(item: BlockchainItem) {
         val itemList = blcItemListLD.value ?: return
 
         itemList.add(item)

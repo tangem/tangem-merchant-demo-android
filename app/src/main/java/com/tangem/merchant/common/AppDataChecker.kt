@@ -7,7 +7,7 @@ class AppDataChecker {
     private val merchantStore = MerchantStore()
     private val blcListStore = BlcListStore()
 
-    fun isDataEnough(): Boolean  {
+    fun isDataEnough(): Boolean {
         if (!blcListStore.has()) return false
         if (!merchantStore.has()) return false
 

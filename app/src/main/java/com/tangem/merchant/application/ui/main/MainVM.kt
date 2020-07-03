@@ -3,51 +3,95 @@ package com.tangem.merchant.application.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tangem.blockchain.common.Blockchain
-import com.tangem.merchant.application.domain.model.*
+import com.tangem.merchant.application.domain.httpService.coinMarketCap.CoinMarket
+import com.tangem.merchant.application.domain.httpService.coinMarketCap.ErrorMessage
+import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
+import com.tangem.merchant.application.domain.model.BlockchainItem
+import com.tangem.merchant.application.domain.model.ChargeData
+import com.tangem.merchant.application.domain.model.FiatValue
+import com.tangem.merchant.application.domain.model.Merchant
+import com.tangem.merchant.application.domain.store.FiatCurrencyListStore
 import com.tangem.merchant.application.domain.store.MerchantStore
 import com.tangem.merchant.application.domain.store.SelectedBlcItemStore
-import com.tangem.merchant.application.ui.base.viewModel.BlockchainListVM
+import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
 import com.tangem.merchant.common.AppDataChecker
 import com.tangem.merchant.common.FirstLaunchChecker
+import com.tangem.merchant.common.SingleLiveEvent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.util.*
+
 
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
  */
-class MainVM : BlockchainListVM() {
-    private val initialFiatValue: String = "0"
-
+class MainVM : BlcItemListVM() {
     var startFromSettingsScreen = false
-    var chargeData = ChargeData(BlockchainItem(Blockchain.Unknown, ""), initialFiatValue.toBigDecimal())
 
+    // the initialFiatValue must be String for properly works of the NumberKeyboardController
+    val initialFiatValue: String = "0"
     lateinit var keyboardController: NumberKeyboardController
 
-    private val fiatValueLD = MutableLiveData<FiatValue>()
-    private val merchantNameLD = MutableLiveData<String>()
-    private val merchantCurrencySymbolLD = MutableLiveData<String>()
-    private val selectedBlcItemLD = MutableLiveData<BlockchainItem>()
+    val errorMessageSLE = SingleLiveEvent<ErrorMessage>()
 
-    private var merchantModel: Merchant
+    private val coinMarket = CoinMarket() { errorMessageSLE.postValue(it) }
+
+    private var chargeData = ChargeData(BlockchainItem(Blockchain.Unknown, ""), initialFiatValue.toBigDecimal())
+
+    private var merchant: Merchant
     private val merchantStore = MerchantStore()
+    private val merchantNameLD = MutableLiveData<String>()
+    private val merchantFiatCurrencyLD = MutableLiveData<FiatCurrency>()
+
+    private val fiatValueLD = MutableLiveData<FiatValue>()
+    private val convertedFiatValueLD = MutableLiveData<BigDecimal>(0.toBigDecimal())
+    private val fiatCurrencyListLD = MutableLiveData<List<FiatCurrency>>(listOf())
+    private val fiatCurrencyListStore = FiatCurrencyListStore()
+
+    private val selectedBlcItemLD = MutableLiveData<BlockchainItem>()
     private val selectedBlcItemStore = SelectedBlcItemStore()
 
-    fun getFiatValue(): LiveData<FiatValue> = fiatValueLD
+    private val uiIsEnabledLD = MutableLiveData<Boolean>()
+
     fun getMerchantName(): LiveData<String> = merchantNameLD
-    fun getMerchantCurrencySymbol(): LiveData<String> = merchantCurrencySymbolLD
+    fun getMerchantFiatCurrency(): LiveData<FiatCurrency> = merchantFiatCurrencyLD
+    fun getFiatValue(): LiveData<FiatValue> = fiatValueLD
+    fun getConvertedFiatValue(): LiveData<BigDecimal> = convertedFiatValueLD
+    fun getFiatCurrencyList(): LiveData<List<FiatCurrency>> = fiatCurrencyListLD
     fun getSelectedBlcItem(): LiveData<BlockchainItem> = selectedBlcItemLD
+    fun getUiLockState(): LiveData<Boolean> = uiIsEnabledLD
+    fun getChargeData(): ChargeData = chargeData
 
     init {
-        merchantModel = merchantStore.restore()
-        merchantNameLD.value = merchantModel.name
-        merchantCurrencySymbolLD.value = merchantModel.fiatCurrency?.symbol
+        loadFiatCurrencyList()
+        merchant = merchantStore.restore()
+        merchantNameLD.value = merchant.name
+        merchantFiatCurrencyLD.value = merchant.fiatCurrency
         selectedBlcItemLD.value = selectedBlcItemStore.restore()
 
-        fiatValueLD.value = createFiatValue(merchantModel)
+        fiatValueLD.value = createFiatValue(merchant)
         initKeyboardController()
         keyboardController.onUpdate = { fiatValue ->
             chargeData = chargeData.copy(priceTag = fiatValue.value)
             fiatValueLD.value = fiatValue
+        }
+    }
+
+    private fun loadFiatCurrencyList() {
+        val list = fiatCurrencyListStore.restore()
+        if (list.isEmpty()) {
+            coinMarket.loadFiatMap {
+                fiatCurrencyListLD.postValue(it)
+                fiatCurrencyListStore.save(it)
+            }
+        } else {
+            fiatCurrencyListLD.postValue(list)
+            coinMarket.loadFiatMap {
+                fiatCurrencyListLD.postValue(it)
+                fiatCurrencyListStore.save(it)
+            }
         }
     }
 
@@ -57,22 +101,23 @@ class MainVM : BlockchainListVM() {
     }
 
     fun merchantNameChanged(name: String) {
-        merchantNameLD.value = name
-        merchantModel = merchantModel.copy(name = name)
-        merchantStore.save(merchantModel)
+        merchant = merchant.copy(name = name)
+        merchantNameLD.value = merchant.name
+        merchantStore.save(merchant)
     }
 
     fun fiatCurrencyChanged(fiatCurrency: FiatCurrency) {
-        merchantCurrencySymbolLD.value = fiatCurrency.symbol
-        merchantModel = merchantModel.copy(fiatCurrency = fiatCurrency)
-        fiatValueLD.value = createFiatValue(merchantModel, fiatValueLD.value)
+        merchant = merchant.copy(fiatCurrency = fiatCurrency)
+        merchantStore.save(merchant)
+        merchantFiatCurrencyLD.value = merchant.fiatCurrency
+
+        fiatValueLD.value = createFiatValue(merchant, fiatValueLD.value)
         initKeyboardController()
-        merchantStore.save(merchantModel)
     }
 
     private fun initKeyboardController() {
-        val code = getCurrencyCode(merchantModel)
-        val fiat = fiatValueLD.value ?: createFiatValue(merchantModel)
+        val code = getCurrencyCode(merchant)
+        val fiat = fiatValueLD.value ?: createFiatValue(merchant)
         if (::keyboardController.isInitialized) {
             keyboardController = NumberKeyboardController(code, fiat, keyboardController.onUpdate)
         } else {
@@ -93,6 +138,36 @@ class MainVM : BlockchainListVM() {
     }
 
     private fun getCurrencyCode(merchant: Merchant): String {
-        return merchant.fiatCurrency?.code ?: Currency.getInstance(Locale.getDefault()).currencyCode
+        return merchant.fiatCurrency?.symbol ?: Currency.getInstance(Locale.getDefault()).currencyCode
+    }
+
+    fun calculateConversion() {
+        val fiatValue = fiatValueLD.value ?: return
+        if (fiatValue.stringValue == "0") {
+            convertedFiatValueLD.postValue(0.toBigDecimal())
+            return
+        }
+
+        coinMarket.scope.launch {
+            delay(300)
+            if (fiatValue.value != fiatValueLD.value?.value) return@launch
+            val blcItem = selectedBlcItemLD.value ?: return@launch
+            val currencyList = fiatCurrencyListLD.value ?: return@launch
+            val fiatCurrency = merchantFiatCurrencyLD.value ?: return@launch
+
+            val currency = currencyList.firstOrNull { it.symbol == fiatCurrency.symbol }
+            if (currency == null) {
+                errorMessageSLE.postValue(ErrorMessage("Price convertion unsupported v2"))
+                return@launch
+            }
+
+            coinMarket.convertFiatValue(
+                fiatValue.value,
+                blcItem.blockchain,
+                currency,
+                { uiIsEnabledLD.postValue(it) },
+                { convertedFiatValueLD.postValue(it) }
+            )
+        }
     }
 }

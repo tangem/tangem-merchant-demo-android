@@ -4,15 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.domain.model.BlockchainItem
-import com.tangem.merchant.application.ui.base.viewModel.BlockchainListVM
+import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.MainVM
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 
-class SettingsAddBlcVM : BlockchainListVM() {
+class SettingsAddBlcVM : BlcItemListVM() {
     var spinnerPosition: Int = 0
 
     private var blcItem: BlockchainItem = BlockchainItem(Blockchain.Unknown, "")
     private val isAddBlcBtnEnabledLD = MutableLiveData<Boolean>(false)
+
+    fun getBlockchainList(): MutableList<Blockchain> {
+        return Blockchain.values().filter {
+            it != Blockchain.Unknown && it != Blockchain.Ducatus && !it.id.contains("test")
+        }.toMutableList()
+    }
 
     fun isAddBlcButtonEnabled(): LiveData<Boolean> = isAddBlcBtnEnabledLD
 

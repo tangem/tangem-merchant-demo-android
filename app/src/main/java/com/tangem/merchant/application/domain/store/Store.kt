@@ -10,7 +10,7 @@ import com.google.gson.Gson
 interface Store<M> {
     fun save(value: M)
     fun restore(): M
-    fun has():Boolean
+    fun has(): Boolean
 }
 
 abstract class BaseStore<M>(

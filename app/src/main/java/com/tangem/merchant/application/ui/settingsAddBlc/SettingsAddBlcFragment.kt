@@ -25,10 +25,6 @@ class SettingsAddBlcFragment : BaseFragment() {
 
     override fun getLayoutId() = R.layout.fg_settings_add_blc
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -38,11 +34,7 @@ class SettingsAddBlcFragment : BaseFragment() {
     }
 
     private fun initSpinner() {
-        val adapter = BlockchainSpinnerAdapter(
-            requireContext(),
-            Blockchain.values().filter { it != Blockchain.Unknown }.toMutableList()
-        )
-        spinner.adapter = adapter
+        spinner.adapter = BlockchainSpinnerAdapter(requireContext(), settingsAddBlcVM.getBlockchainList())
         BaseHintAdapter.setItemSelectedListener<Blockchain>(spinner) { blockchain, position ->
             settingsAddBlcVM.spinnerPosition = position
             settingsAddBlcVM.blockchainChanged(blockchain)
