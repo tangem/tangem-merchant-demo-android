@@ -2,6 +2,7 @@ package com.tangem.merchant.application.domain.httpService.coinMarketCap
 
 import com.squareup.moshi.JsonAdapter
 import com.tangem.blockchain.common.Blockchain
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.httpService.createMoshi
 import kotlinx.coroutines.*
 import retrofit2.HttpException
@@ -10,7 +11,7 @@ import java.math.BigDecimal
 /**
  * Created by Anton Zhilenkov on 02/07/2020.
  */
-typealias ErrorMessageHandler = (ErrorMessage) -> Unit
+typealias ErrorMessageHandler = (AppError) -> Unit
 
 class CoinMarket(
     private val errorMessageHandler: ErrorMessageHandler
@@ -25,15 +26,16 @@ class CoinMarket(
         when (throwable) {
             is HttpException -> {
                 val stringBody = throwable.response()?.errorBody()?.string() ?: return@CoroutineExceptionHandler
-                val jsonAdapter: JsonAdapter<CoinMarketError> = moshi.adapter(CoinMarketError::class.java)
-                val coinMarketError: CoinMarketError =
+                val jsonAdapter: JsonAdapter<CoinMarketErrorResponse> =
+                    moshi.adapter(CoinMarketErrorResponse::class.java)
+                val coinMarketError: CoinMarketErrorResponse =
                     jsonAdapter.fromJson(stringBody) ?: return@CoroutineExceptionHandler
 
                 val status = coinMarketError.status
                 val message = "code: ${status.error_code}, ${status.error_message}"
-                errorMessageHandler(ErrorMessage(message))
+                errorMessageHandler(AppError.CoinMarketHttpError(message))
             }
-            else -> errorMessageHandler(ErrorMessage(throwable = throwable))
+            else -> errorMessageHandler(AppError.Throwable(throwable))
         }
     }
 
@@ -64,7 +66,7 @@ class CoinMarket(
             val conversionPrice = conversion.data.getQuotes()[blockchain.currency]
             if (conversionPrice == null) {
                 conversionInActiveState = false
-                errorMessageHandler(ErrorMessage("Price conversion is not supported"))
+                errorMessageHandler(AppError.ConversionError())
                 return@launch
             } else {
                 callbackConversion(conversionPrice.price)

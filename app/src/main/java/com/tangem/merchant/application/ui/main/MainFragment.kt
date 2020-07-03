@@ -14,6 +14,7 @@ import com.tangem.blockchain.common.Blockchain
 import com.tangem.blockchain.extensions.Signer
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.charge.ChargeSession
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.tangem_sdk_new.extensions.init
@@ -113,10 +114,11 @@ class MainFragment : BaseFragment() {
 
     private fun listenErrors() {
         mainVM.errorMessageSLE.observe(viewLifecycleOwner, Observer {
-            when {
-                it.message != null -> showSnackbar(it.message)
-                it.throwable != null -> showSnackbar(it.throwable.toString())
-                it.messageId != null -> showSnackbar(it.messageId)
+            when (it) {
+                is AppError.Throwable -> showSnackbar(it.throwable.toString())
+                is AppError.UnsupportedConversion -> showSnackbar(R.string.e_unsupported_conversion)
+                is AppError.ConversionError -> showSnackbar(R.string.e_coin_market_conversion_error)
+                is AppError.CoinMarketHttpError -> showSnackbar(it.errorMessage)
             }
         })
     }

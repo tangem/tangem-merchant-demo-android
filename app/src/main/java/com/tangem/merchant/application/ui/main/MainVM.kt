@@ -3,8 +3,8 @@ package com.tangem.merchant.application.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tangem.blockchain.common.Blockchain
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.httpService.coinMarketCap.CoinMarket
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.ErrorMessage
 import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.ChargeData
@@ -34,7 +34,7 @@ class MainVM : BlcItemListVM() {
     val initialFiatValue: String = "0"
     lateinit var keyboardController: NumberKeyboardController
 
-    val errorMessageSLE = SingleLiveEvent<ErrorMessage>()
+    val errorMessageSLE = SingleLiveEvent<AppError>()
 
     private val coinMarket = CoinMarket() { errorMessageSLE.postValue(it) }
 
@@ -149,7 +149,7 @@ class MainVM : BlcItemListVM() {
         }
 
         coinMarket.scope.launch {
-            delay(300)
+            delay(450)
             if (fiatValue.value != fiatValueLD.value?.value) return@launch
             val blcItem = selectedBlcItemLD.value ?: return@launch
             val currencyList = fiatCurrencyListLD.value ?: return@launch
@@ -157,7 +157,7 @@ class MainVM : BlcItemListVM() {
 
             val currency = currencyList.firstOrNull { it.symbol == fiatCurrency.symbol }
             if (currency == null) {
-                errorMessageSLE.postValue(ErrorMessage("Price convertion unsupported v2"))
+                errorMessageSLE.postValue(AppError.UnsupportedConversion())
                 return@launch
             }
 

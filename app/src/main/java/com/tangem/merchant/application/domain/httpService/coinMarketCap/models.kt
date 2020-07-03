@@ -13,7 +13,7 @@ open class CoinMarketResponse<T : Any> {
 
 class FiatMapResponse : CoinMarketResponse<List<FiatCurrency>>()
 class PriceConversionResponse : CoinMarketResponse<ConversionPrice>()
-class CoinMarketError(val status: Status)
+class CoinMarketErrorResponse(val status: Status)
 
 data class ConversionPrice(
     val id: String,
@@ -56,10 +56,4 @@ data class FiatCurrency(
 data class PriceConversion(
     val price: BigDecimal,
     val last_updated: String
-)
-
-data class ErrorMessage(
-    val message: String? = null,
-    val throwable: Throwable? = null,
-    val messageId: Int? = null
 )
