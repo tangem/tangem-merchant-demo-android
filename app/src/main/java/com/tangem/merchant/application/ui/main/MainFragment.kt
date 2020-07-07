@@ -97,7 +97,6 @@ class MainFragment : BaseFragment() {
 
     private fun listenLockUiStateChanges() {
         mainVM.getUiLockState().observe(viewLifecycleOwner, Observer {
-            tvBlockchainValue.isEnabled = it
             btnCharge.isEnabled = it
         })
     }
