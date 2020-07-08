@@ -1,5 +1,6 @@
 package com.tangem.merchant.application.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -16,8 +17,10 @@ import com.tangem.merchant.application.domain.charge.ChargeSession
 import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.BaseFragment
+import com.tangem.merchant.common.toggleWidget.*
 import com.tangem.tangem_sdk_new.extensions.init
 import kotlinx.android.synthetic.main.fg_main.*
+import ru.dev.gbixahue.eu4d.lib.android._android.components.stringFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 
@@ -28,6 +31,7 @@ import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 class MainFragment : BaseFragment() {
 
     private val mainVM: MainVM by activityViewModels()
+    private lateinit var loadingButton: ToggleWidget
 
     override fun getLayoutId(): Int = R.layout.fg_main
 
@@ -39,6 +43,7 @@ class MainFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initChargeButton()
         setupKeyboard()
         listenBlcItemSpinnerChanges()
         listenMerchantChanges()
@@ -46,7 +51,19 @@ class MainFragment : BaseFragment() {
         listenConversionChanges()
         listenLockUiStateChanges()
         listenErrors()
-        initChargeButton()
+    }
+
+    private fun initChargeButton() {
+        loadingButton = ToggleWidget(flTest, btnCharge, progress, ProgressState.None())
+        loadingButton.setupIndeterminateProgress(requireContext())
+        btnCharge.setOnClickListener {
+            val sdk = TangemSdk.init(requireActivity())
+            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData()){
+                tvFeeValue.text = it?.toString() ?: ""
+            }) {
+                Log.d(this, "the charge session complete")
+            }
+        }
     }
 
     private fun setupKeyboard() {
@@ -79,12 +96,13 @@ class MainFragment : BaseFragment() {
 
     private fun listenMerchantChanges() {
         mainVM.getMerchantName().observe(viewLifecycleOwner, Observer { tvMerchantTitle.text = it })
-//        mainVM.getMerchantFiatCurrency().observe(viewLifecycleOwner, Observer { tvFiatCurrency.text = it.sign })
     }
 
     private fun listenNumberKeyboardChanges() {
         mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
+            loadingButton.setState(ProgressState.Progress())
             tvFiatValue.text = it.localizedValue
+            tvFeeValue.text = ""
             mainVM.calculateConversion()
         })
     }
@@ -92,6 +110,7 @@ class MainFragment : BaseFragment() {
     private fun listenConversionChanges() {
         mainVM.getConvertedFiatValue().observe(viewLifecycleOwner, Observer {
             tvBlockchainValue.text = it.toString()
+            loadingButton.setState(ProgressState.None())
         })
     }
 
@@ -99,15 +118,6 @@ class MainFragment : BaseFragment() {
         mainVM.getUiLockState().observe(viewLifecycleOwner, Observer {
             btnCharge.isEnabled = it
         })
-    }
-
-    private fun initChargeButton() {
-        btnCharge.setOnClickListener {
-            val sdk = TangemSdk.init(requireActivity())
-            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData())) {
-                Log.d(this, "the charge session complete")
-            }
-        }
     }
 
     private fun listenErrors() {
@@ -154,4 +164,13 @@ class BlcSpinnerAdapter(
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getCount(): Int = itemList.size
+}
+
+
+fun ToggleWidget.setupIndeterminateProgress(context: Context) {
+    mainViewStateModifiers.clear()
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(EnableDisableStateModifier())
+    toggleStateModifiers.clear()
+    toggleStateModifiers.add(ShowHideStateModifier())
 }

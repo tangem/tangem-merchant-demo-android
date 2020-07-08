@@ -182,24 +182,40 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnCharge"
+            app:layout_constraintBottom_toTopOf="@+id/flTest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnCharge"
+        <FrameLayout
+            android:id="@+id/flTest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="46dp"
             android:layout_marginEnd="46dp"
             android:layout_marginBottom="40dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:text="@string/btn_charge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <Button
+                android:id="@+id/btnCharge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/btn_charge" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

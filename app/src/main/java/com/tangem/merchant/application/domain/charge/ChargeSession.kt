@@ -21,7 +21,8 @@ import java.math.BigDecimal
 import java.util.*
 
 class ChargeSession(
-    private val data: ChargeData
+    private val data: ChargeData,
+    private val feeCallback: (BigDecimal?) -> Unit
 ) : CardSessionRunnable<CommandResponse> {
 
     private val parentJob = Job()
@@ -66,6 +67,7 @@ class ChargeSession(
                     val feeAmount = if (successFeeResult.data.size == 3) successFeeResult.data[1]
                     else successFeeResult.data[0]
 
+                    feeCallback(feeAmount.value)
                     val txData = walletManager.createTransaction(amount, feeAmount, destBlcItem.address)
                     val errors = validateTransaction(amount, feeAmount, walletManager)
                     if (errors.isNotEmpty()) {
