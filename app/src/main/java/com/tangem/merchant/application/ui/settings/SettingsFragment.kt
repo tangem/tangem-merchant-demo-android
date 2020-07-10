@@ -86,14 +86,17 @@ class SettingsFragment : BaseFragment() {
     }
 
     private fun initSpinner() {
+        val adapter = FiatCurrencySpinnerAdapter(requireContext(), listOf())
+        spinner.adapter = adapter
+        BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
+            settingsVM.spinnerPosition = position
+            mainVM.fiatCurrencyChanged(fiatCurrency)
+            updateLaunchButtonState()
+        }
+
         mainVM.getFiatCurrencyList().observe(viewLifecycleOwner, Observer { fiatCurrencyList ->
-            val adapter = FiatCurrencySpinnerAdapter(requireContext(), fiatCurrencyList)
-            spinner.adapter = adapter
-            BaseHintAdapter.setItemSelectedListener<FiatCurrency>(spinner) { fiatCurrency, position ->
-                settingsVM.spinnerPosition = position
-                mainVM.fiatCurrencyChanged(fiatCurrency)
-                updateLaunchButtonState()
-            }
+            adapter.setItemList(fiatCurrencyList)
+            adapter.notifyDataSetChanged()
 
             mainVM.getMerchantFiatCurrency().observe(viewLifecycleOwner, Observer { fiatCurrency ->
                 val found = fiatCurrencyList.firstOrNull { it == fiatCurrency } ?: return@Observer

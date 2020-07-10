@@ -24,6 +24,11 @@ open class HintSpinnerAdapter<T>(
 
     protected var hint: String? = if (hint == null) null else context.getString(hint)
 
+    fun setItemList(list: List<T>) {
+        itemList.clear()
+        itemList.addAll(list)
+    }
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val inflater = LayoutInflater.from(parent.context)
         val inflatedView = inflater.inflate(android.R.layout.simple_spinner_item, parent, false) as TextView
