@@ -8,4 +8,5 @@
 
     <dimen name="bg_corner_radius">8dp</dimen>
     <dimen name="rv_blockchain_bottom_paddin">100dp</dimen>
+    <dimen name="underlined_spinner_height">60dp</dimen>
 </resources>
