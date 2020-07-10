@@ -19,6 +19,7 @@
     <string name="title_add_blc">Add Blockchain</string>
     <string name="network_fee">+ network fee</string>
 
+    <string name="e_not_enough_data_for_launch">You can not go to the payment screen if the store does not have a wallet, a currency or a name</string>
     <string name="e_unsupported_conversion">Unsupported conversion</string>
     <string name="e_coin_market_conversion_error">Conversion error</string>
 

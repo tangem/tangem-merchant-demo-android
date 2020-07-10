@@ -2,6 +2,7 @@ package com.tangem.merchant.application.ui
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -14,6 +15,7 @@ import com.tangem.merchant.R
 import com.tangem.merchant.application.ui.main.MainVM
 import com.tangem.merchant.common.navigation.NavDestinationLogger
 import kotlinx.android.synthetic.main.a_main.*
+import ru.dev.gbixahue.eu4d.lib.android._android.components.toast
 import ru.dev.gbixahue.eu4d.lib.android._android.components.weakReference
 
 /**
@@ -29,14 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_main)
 
-        mainVM.startFromSettingsScreen = !mainVM.isDataEnoughForLaunch()
-        setupToolbar()
         setupNavController()
-    }
-
-    private fun setupToolbar() {
-        toolbar.title = ""
-        setSupportActionBar(toolbar)
     }
 
     private fun setupNavController() {
@@ -49,11 +44,27 @@ class MainActivity : AppCompatActivity() {
         navController.graph = graph
 
         appBarConfiguration = AppBarConfiguration(navController.graph)
-        toolbar.setupWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener(NavDestinationLogger(this.weakReference()))
+        setupToolbar(navController, appBarConfiguration)
     }
 
-    override fun onSupportNavigateUp(): Boolean = findNavigationController().navigateUp(appBarConfiguration)
+    private fun setupToolbar(navController: NavController, appBarConfiguration: AppBarConfiguration) {
+        toolbar.title = ""
+        setSupportActionBar(toolbar)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+        toolbar.setNavigationOnClickListener {
+            val currentDestination = navController.currentDestination?.id ?: return@setNavigationOnClickListener
 
-    private fun findNavigationController(): NavController = findNavController(R.id.nav_host_fragment)
+            if (currentDestination == R.id.nav_screen_settings) {
+                if (mainVM.canNavigateUpFromSettingsScreen()) navController.navigateUp()
+                else toast(R.string.e_not_enough_data_for_launch, Toast.LENGTH_LONG)
+            } else {
+                navController.navigateUp()
+            }
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return findNavController(R.id.nav_host_fragment).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 }

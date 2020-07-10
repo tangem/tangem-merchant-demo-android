@@ -4,9 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.ui.MainActivity
@@ -18,6 +21,7 @@ import com.tangem.merchant.application.ui.settingsAddBlc.SpaceItemDivider
 import kotlinx.android.synthetic.main.fg_settings.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
 import ru.dev.gbixahue.eu4d.lib.android._android.components.dimenFrom
+import ru.dev.gbixahue.eu4d.lib.android._android.components.toast
 import ru.dev.gbixahue.eu4d.lib.android._android.views.afterTextChanged
 import ru.dev.gbixahue.eu4d.lib.android._android.views.moveCursorToEnd
 import ru.dev.gbixahue.eu4d.lib.android._android.views.show
@@ -48,6 +52,21 @@ class SettingsFragment : BaseFragment() {
         initSpinner()
         initBlcRecycler()
         initLaunchButton()
+        addOnBackPressHandler()
+    }
+
+    private fun addOnBackPressHandler() {
+        val activity = activity ?: return
+
+        activity.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mainVM.canNavigateUpFromSettingsScreen()) {
+                    if (!Navigation.findNavController(mainView).navigateUp()) requireActivity().finish()
+                } else {
+                    activity.toast(R.string.e_not_enough_data_for_launch, Toast.LENGTH_LONG)
+                }
+            }
+        })
     }
 
     private fun initMerchantTitle() {
@@ -129,8 +148,6 @@ class SettingsFragment : BaseFragment() {
     private fun updateLaunchButtonState() {
         btnLaunchApp.isEnabled = mainVM.isDataEnoughForLaunch()
     }
-
-
 }
 
 class FiatCurrencySpinnerAdapter(

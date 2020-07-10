@@ -65,6 +65,7 @@ class MainVM : BlcItemListVM() {
     fun getChargeData(): ChargeData = chargeData
 
     init {
+        startFromSettingsScreen = !isDataEnoughForLaunch()
         loadFiatCurrencyList()
         merchant = merchantStore.restore()
         merchantNameLD.value = merchant.name
@@ -76,6 +77,11 @@ class MainVM : BlcItemListVM() {
         keyboardController.onUpdate = { fiatValue ->
             fiatValueLD.value = fiatValue
         }
+    }
+
+    fun canNavigateUpFromSettingsScreen(): Boolean {
+        if (startFromSettingsScreen) return true
+        return isDataEnoughForLaunch()
     }
 
     private fun loadFiatCurrencyList() {
