@@ -30,12 +30,12 @@
         android:layout_marginTop="2dp"
         android:layout_marginBottom="12dp"
         android:textColor="@color/textSecondary"
-        android:textSize="11sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnDelete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvBlcName"
-        tools:text="SDFGSBVS32rte@#Trger243Rwterw3r" />
+        tools:text="SDFGSBVS32rte@#Trger243Rwterw3rSDFGSBVS32rte@#SDFGSBVS32rte@#Trger243Rwterw3rSDFGSBVS32rte@#Trger243Rwterw3rTrger243Rwterw3r" />
 
     <ImageButton
         android:id="@+id/btnDelete"

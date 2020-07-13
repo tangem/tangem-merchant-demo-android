@@ -2,6 +2,9 @@ package com.tangem.merchant.application.ui.settingsAddBlc
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -9,11 +12,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
+import com.tangem.merchant.BuildConfig
 import com.tangem.merchant.R
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
+import com.tangem.tangem_sdk_new.extensions.init
 import kotlinx.android.synthetic.main.fg_settings_add_blc.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
 import ru.dev.gbixahue.eu4d.lib.android._android.components.colorFrom
@@ -32,6 +38,7 @@ class SettingsAddBlcFragment : BaseFragment() {
         initSpinner()
         initAddress()
         initAddBlcButton()
+        if (BuildConfig.DEBUG) enableDebugMenu()
     }
 
     private fun initSpinner() {
@@ -70,6 +77,36 @@ class SettingsAddBlcFragment : BaseFragment() {
         })
     }
 
+    // only for debug mode
+    private fun enableDebugMenu() {
+        setHasOptionsMenu(true)
+        settingsAddBlcVM.getBlcItem().observe(viewLifecycleOwner, Observer {
+            val position = settingsAddBlcVM.getBlockchainList().indexOf(it.blockchain) + 1
+            if (position == settingsAddBlcVM.spinnerPosition) return@Observer
+
+            spinner.setSelection(position)
+            etBlcAddress.setText(it.address)
+        })
+    }
+
+    // only for debug mode
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (BuildConfig.DEBUG) inflater.inflate(R.menu.menu_add_blc, menu)
+    }
+
+    // only for debug mode
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (!BuildConfig.DEBUG) return false
+
+        return when(item.itemId) {
+            R.id.menu_action_add_blockchain -> {
+                val sdk = TangemSdk.init(requireActivity())
+                settingsAddBlcVM.addBlcItemFromCard(sdk)
+                true
+            }
+            else -> false
+        }
+    }
 }
 
 class BlockchainSpinnerAdapter(
