@@ -16,6 +16,7 @@ import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
 import kotlinx.android.synthetic.main.fg_settings_add_blc.*
 import kotlinx.android.synthetic.main.w_spinner_underlined.*
+import ru.dev.gbixahue.eu4d.lib.android._android.components.colorFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.afterTextChanged
 
 class SettingsAddBlcFragment : BaseFragment() {
@@ -49,6 +50,13 @@ class SettingsAddBlcFragment : BaseFragment() {
             settingsAddBlcVM.onAddBlcItem(mainVM)
             return@setOnImeActionListener false
         }
+
+        var prevColor: Int? = null
+        settingsAddBlcVM.isBlcAddressValid().observe(viewLifecycleOwner, Observer {
+            if (prevColor == null) prevColor = etBlcAddress.currentTextColor
+            if (it) etBlcAddress.setTextColor(prevColor!!)
+            else etBlcAddress.setTextColor(requireContext().colorFrom(android.R.color.holo_red_dark))
+        })
     }
 
 

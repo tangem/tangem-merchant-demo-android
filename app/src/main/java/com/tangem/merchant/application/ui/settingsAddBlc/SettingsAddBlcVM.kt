@@ -13,6 +13,7 @@ class SettingsAddBlcVM : BlcItemListVM() {
 
     private var blcItem: BlockchainItem = BlockchainItem(Blockchain.Unknown, "")
     private val isAddBlcBtnEnabledLD = MutableLiveData<Boolean>(false)
+    private val isBlcAddressValidLD = MutableLiveData<Boolean>()
 
     fun getBlockchainList(): MutableList<Blockchain> {
         return Blockchain.values().filter {
@@ -21,15 +22,16 @@ class SettingsAddBlcVM : BlcItemListVM() {
     }
 
     fun isAddBlcButtonEnabled(): LiveData<Boolean> = isAddBlcBtnEnabledLD
+    fun isBlcAddressValid(): LiveData<Boolean> = isAddBlcBtnEnabledLD
 
     fun blockchainChanged(blockchain: Blockchain) {
         blcItem = blcItem.copy(blockchain = blockchain)
-        isAddBlcBtnEnabledLD.value = blcItemIsReady()
+        changeStateOfAddBlcBtn()
     }
 
     fun addressChanged(address: String) {
         blcItem = blcItem.copy(address = address)
-        isAddBlcBtnEnabledLD.value = blcItemIsReady()
+        changeStateOfAddBlcBtn()
     }
 
     fun onAddBlcItem(mainVM: MainVM) {
@@ -40,7 +42,15 @@ class SettingsAddBlcVM : BlcItemListVM() {
 
         addBlcItem(blcItem)
         mainVM.refreshBlcList()
+    }
 
+    private fun changeStateOfAddBlcBtn() {
+        isAddBlcBtnEnabledLD.value = blcItemIsReady() && blcAddressIsValid()
+    }
+
+    private fun blcAddressIsValid(): Boolean {
+        isBlcAddressValidLD.value = blcItem.blockchain.validateAddress(blcItem.address)
+        return isBlcAddressValidLD.value!!
     }
 
     private fun blcItemIsReady(): Boolean = blcItem.address.isNotEmpty() && blcItem.blockchain != Blockchain.Unknown
