@@ -32,6 +32,16 @@ class BlockchainNotSupport : BaseError() {
     override var customMessage: String = "Blockchain not support"
 }
 
+class SameWalletAddress(
+    override val code: Int = 10012,
+    override var customMessage: String = "Source and destination address is the same"
+): BaseError()
+
+
+
+
+
+
 class ValidationTransactionTransaction(
     override var customMessage: String = "Unknown transaction validation error"
 ) : BaseError() {
@@ -55,5 +65,3 @@ class TransactionSendError(
 ) : ThrowableError(throwable) {
     override val code: Int = 10021
 }
-
-

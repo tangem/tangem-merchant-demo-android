@@ -52,6 +52,12 @@ class ChargeSession(
             return
         }
 
+        if (!isDifferentWalletAddress(walletManager.wallet.address, data.blcItem.address)) {
+            Log.e(this, "Error: Source and destination addess is the same")
+            callback(CompletionResult.Failure(SameWalletAddress()))
+            return
+        }
+
         // address в Amount важен только при использовании токена
         val amount = Amount(data.writeOfValue, destBlcItem.blockchain, destBlcItem.address)
 
@@ -113,6 +119,8 @@ class ChargeSession(
     private fun validateAmount(amount: Amount, walletManager: WalletManager): Boolean {
         return amount.isAboveZero() && walletManager.wallet.fundsAvailable(amount.type) >= amount.value
     }
+
+    private fun isDifferentWalletAddress(srcAddress: String, destAddress: String):Boolean = srcAddress != destAddress
 }
 
 class SomeSuccessResponse : CommandResponse {
