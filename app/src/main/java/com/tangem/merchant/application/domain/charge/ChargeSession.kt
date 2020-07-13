@@ -13,6 +13,7 @@ import com.tangem.merchant.application.domain.model.ChargeData
 import kotlinx.coroutines.*
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 class ChargeSession(
@@ -53,13 +54,14 @@ class ChargeSession(
         }
 
         if (!isDifferentWalletAddress(walletManager.wallet.address, data.blcItem.address)) {
-            Log.e(this, "Error: Source and destination addess is the same")
+            Log.e(this, "Error: Source and destination address is the same")
             callback(CompletionResult.Failure(SameWalletAddress()))
             return
         }
 
         // address в Amount важен только при использовании токена
-        val amount = Amount(data.writeOfValue, destBlcItem.blockchain, destBlcItem.address)
+        val amount = Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
+        amount.decimals
 
         scope.launch {
             val txSender = walletManager as TransactionSender
@@ -97,6 +99,10 @@ class ChargeSession(
                 }
             }
         }
+    }
+
+    private fun castDecimals(value: BigDecimal, blockchain: Blockchain): BigDecimal {
+        return value.setScale(blockchain.decimals(), RoundingMode.HALF_UP)
     }
 
     private fun validateTransaction(

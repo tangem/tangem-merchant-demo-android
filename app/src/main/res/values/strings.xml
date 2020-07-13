@@ -23,10 +23,4 @@
     <string name="e_unsupported_conversion">Unsupported conversion</string>
     <string name="e_coin_market_conversion_error">Conversion error</string>
 
-    <string-array name="fiat_currencies">
-        <item>USD</item>
-        <item>EUR</item>
-        <item>RUB</item>
-    </string-array>
-
 </resources>

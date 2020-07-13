@@ -24,7 +24,7 @@ open class ThrowableError(
 
 class BlockchainDidNotMatch : BaseError() {
     override val code: Int = 10010
-    override var customMessage: String = "Blockchain didn't match"
+    override var customMessage: String = "Blockchain do not match"
 }
 
 class BlockchainNotSupport : BaseError() {
