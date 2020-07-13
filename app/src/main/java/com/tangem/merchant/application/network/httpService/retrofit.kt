@@ -1,4 +1,4 @@
-package com.tangem.merchant.application.domain.httpService
+package com.tangem.merchant.application.network.httpService
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

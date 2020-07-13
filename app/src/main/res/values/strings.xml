@@ -22,5 +22,6 @@
     <string name="e_not_enough_data_for_launch">You can not go to the payment screen if the store does not have a wallet, a currency or a name</string>
     <string name="e_unsupported_conversion">Unsupported conversion</string>
     <string name="e_coin_market_conversion_error">Conversion error</string>
+    <string name="e_lost_internet_connection">There is no internet connection. Please check your connection and try again</string>
 
 </resources>

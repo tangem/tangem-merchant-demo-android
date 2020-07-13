@@ -1,9 +1,9 @@
-package com.tangem.merchant.application.domain.httpService.coinMarketCap
+package com.tangem.merchant.application.network.httpService.coinMarketCap
 
 import com.squareup.moshi.JsonAdapter
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.domain.error.AppError
-import com.tangem.merchant.application.domain.httpService.createMoshi
+import com.tangem.merchant.application.network.httpService.createMoshi
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.math.BigDecimal

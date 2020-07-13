@@ -1,7 +1,7 @@
 package com.tangem.merchant.application.domain.model
 
 import com.tangem.blockchain.common.Blockchain
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
+import com.tangem.merchant.application.network.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.common.extensions.formatToCurrency
 import java.math.BigDecimal
 

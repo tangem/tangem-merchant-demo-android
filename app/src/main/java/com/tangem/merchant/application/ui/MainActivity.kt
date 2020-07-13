@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.tangem.merchant.R
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.ui.main.MainVM
+import com.tangem.merchant.common.SnackbarHolder
 import com.tangem.merchant.common.navigation.NavDestinationLogger
 import kotlinx.android.synthetic.main.a_main.*
 import ru.dev.gbixahue.eu4d.lib.android._android.components.toast
@@ -21,7 +25,7 @@ import ru.dev.gbixahue.eu4d.lib.android._android.components.weakReference
 /**
  * Created by Anton Zhilenkov on 16/06/2020.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SnackbarHolder {
 
     private val mainVM: MainVM by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.a_main)
 
         setupNavController()
+        listenErrors()
     }
 
     private fun setupNavController() {
@@ -66,5 +71,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.nav_host_fragment).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun showSnackbar(id: Int, length: Int) {
+        showSnackbar(getString(id), length)
+    }
+
+    override fun showSnackbar(message: String, length: Int) {
+        Snackbar.make(nav_host_fragment,  message, length).show()
+    }
+
+    private fun listenErrors() {
+        mainVM.errorMessageSLE.observe(this, Observer {
+            when (it) {
+                is AppError.Throwable -> showSnackbar(it.throwable.toString())
+                is AppError.UnsupportedConversion -> showSnackbar(R.string.e_unsupported_conversion)
+                is AppError.ConversionError -> showSnackbar(R.string.e_coin_market_conversion_error)
+                is AppError.CoinMarketHttpError -> showSnackbar(it.errorMessage)
+                is AppError.NoInternetConnection -> showSnackbar(R.string.e_lost_internet_connection)
+            }
+        })
     }
 }

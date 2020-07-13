@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.tangem.merchant.R
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
+import com.tangem.merchant.application.network.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.ui.MainActivity
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter

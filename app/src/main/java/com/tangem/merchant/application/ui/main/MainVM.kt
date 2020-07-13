@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.domain.error.AppError
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.CoinMarket
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.ChargeData
 import com.tangem.merchant.application.domain.model.FiatValue
@@ -13,6 +11,9 @@ import com.tangem.merchant.application.domain.model.Merchant
 import com.tangem.merchant.application.domain.store.FiatCurrencyListStore
 import com.tangem.merchant.application.domain.store.MerchantStore
 import com.tangem.merchant.application.domain.store.SelectedBlcItemStore
+import com.tangem.merchant.application.network.NetworkChecker
+import com.tangem.merchant.application.network.httpService.coinMarketCap.CoinMarket
+import com.tangem.merchant.application.network.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
 import com.tangem.merchant.common.AppDataChecker
@@ -34,6 +35,7 @@ class MainVM : BlcItemListVM() {
     val initialFiatValue: String = "0"
     lateinit var keyboardController: NumberKeyboardController
 
+    val networkChecker: NetworkChecker = NetworkChecker.getInstance()
     val errorMessageSLE = SingleLiveEvent<AppError>()
 
     private val coinMarket = CoinMarket() { errorMessageSLE.postValue(it) }
@@ -87,12 +89,16 @@ class MainVM : BlcItemListVM() {
     private fun loadFiatCurrencyList() {
         val list = fiatCurrencyListStore.restore()
         if (list.isEmpty()) {
+            if (!checkNetworkAvailabilityAndNotify()) return
+
             coinMarket.loadFiatMap {
                 fiatCurrencyListLD.postValue(it)
                 fiatCurrencyListStore.save(it)
             }
         } else {
             fiatCurrencyListLD.postValue(list)
+            if (!checkNetworkAvailabilityAndNotify()) return
+
             coinMarket.loadFiatMap {
                 fiatCurrencyListLD.postValue(it)
                 fiatCurrencyListStore.save(it)
@@ -157,6 +163,12 @@ class MainVM : BlcItemListVM() {
         coinMarket.scope.launch {
             delay(450)
             if (fiatValue.value != fiatValueLD.value?.value) return@launch
+            // end of delay
+
+            if (!checkNetworkAvailabilityAndNotify()) {
+                convertedFiatValueLD.postValue(convertedFiatValueLD.value)
+                return@launch
+            }
             val blcItem = selectedBlcItemLD.value ?: return@launch
             val currencyList = fiatCurrencyListLD.value ?: return@launch
             val fiatCurrency = merchantFiatCurrencyLD.value ?: return@launch
@@ -178,5 +190,11 @@ class MainVM : BlcItemListVM() {
                 }
             )
         }
+    }
+
+    private fun checkNetworkAvailabilityAndNotify(): Boolean {
+        val isConnected = networkChecker.activeNetworkIsConnected()
+        if (!isConnected) errorMessageSLE.postValue(AppError.NoInternetConnection())
+        return isConnected
     }
 }

@@ -8,4 +8,5 @@ sealed class AppError {
     class UnsupportedConversion : AppError()
     class ConversionError : AppError()
     class CoinMarketHttpError(val errorMessage: String) : AppError()
+    class NoInternetConnection: AppError()
 }

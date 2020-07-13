@@ -22,6 +22,11 @@ open class ThrowableError(
     override var customMessage: String = throwable?.localizedMessage ?: "Unknown exception"
 }
 
+class NoInternetConnection: BaseError() {
+    override val code: Int = 10002
+    override var customMessage: String = "There is no internet connection. Please check your connection and try again"
+}
+
 class BlockchainDidNotMatch : BaseError() {
     override val code: Int = 10010
     override var customMessage: String = "Blockchain do not match"

@@ -1,7 +1,7 @@
-package com.tangem.merchant.application.domain.httpService.coinMarketCap
+package com.tangem.merchant.application.network.httpService.coinMarketCap
 
-import com.tangem.merchant.application.domain.httpService.createMoshiConverterFactory
-import com.tangem.merchant.application.domain.httpService.createRetrofitInstance
+import com.tangem.merchant.application.network.httpService.createMoshiConverterFactory
+import com.tangem.merchant.application.network.httpService.createRetrofitInstance
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.http.GET

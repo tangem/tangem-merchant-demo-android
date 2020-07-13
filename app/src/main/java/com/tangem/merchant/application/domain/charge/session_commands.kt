@@ -19,11 +19,9 @@ import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 /**
  * Created by Anton Zhilenkov on 12/07/2020.
  */
-typealias ResultCallback = (result: CompletionResult<ResponseApdu>) -> Unit
-
 open class BaseCommand {
 
-    protected fun transceiveApdu(apdu: CommandApdu, session: CardSession, callback: ResultCallback) {
+    protected fun transceiveApdu(apdu: CommandApdu, session: CardSession, callback: (result: CompletionResult<ResponseApdu>) -> Unit) {
         Log.d(this, "transceiveApdu... send...")
         session.send(apdu) { result ->
             when (result) {

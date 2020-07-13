@@ -1,4 +1,4 @@
-package com.tangem.merchant.application.domain.httpService.coinMarketCap
+package com.tangem.merchant.application.network.httpService.coinMarketCap
 
 import ru.dev.gbixahue.eu4d.lib.kotlin.stringOf
 import java.math.BigDecimal

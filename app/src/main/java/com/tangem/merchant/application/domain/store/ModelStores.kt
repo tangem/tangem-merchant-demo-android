@@ -2,9 +2,9 @@ package com.tangem.merchant.application.domain.store
 
 import com.google.gson.reflect.TypeToken
 import com.tangem.merchant.application.AppMerchant
-import com.tangem.merchant.application.domain.httpService.coinMarketCap.FiatCurrency
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.Merchant
+import com.tangem.merchant.application.network.httpService.coinMarketCap.FiatCurrency
 
 /**
  * Created by Anton Zhilenkov on 28/06/2020.

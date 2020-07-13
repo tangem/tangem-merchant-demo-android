@@ -10,6 +10,7 @@ import com.tangem.blockchain.extensions.isAboveZero
 import com.tangem.commands.CommandResponse
 import com.tangem.common.CompletionResult
 import com.tangem.merchant.application.domain.model.ChargeData
+import com.tangem.merchant.application.network.NetworkChecker
 import kotlinx.coroutines.*
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 import java.math.BigDecimal
@@ -59,14 +60,15 @@ class ChargeSession(
             return
         }
 
+        checkNetworkAvailabilityAndNotify(callback)
         // address в Amount важен только при использовании токена
         val amount = Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
-        amount.decimals
 
         scope.launch {
             val txSender = walletManager as TransactionSender
             walletManager.update()
 
+            checkNetworkAvailabilityAndNotify(callback)
             when (val feeResult = txSender.getFee(amount, destBlcItem.address)) {
                 is Result.Success -> {
                     Log.d(this, "Getting fee success")
@@ -82,6 +84,8 @@ class ChargeSession(
                         return@launch
                     }
                     Log.d(this, "Start sending of a transaction")
+
+                    checkNetworkAvailabilityAndNotify(callback)
                     when (val result = txSender.send(txData, SessionTransactionSigner(session))) {
                         is SimpleResult.Success -> {
                             Log.d(this, "Getting fee is success")
@@ -127,6 +131,12 @@ class ChargeSession(
     }
 
     private fun isDifferentWalletAddress(srcAddress: String, destAddress: String):Boolean = srcAddress != destAddress
+
+    private fun checkNetworkAvailabilityAndNotify(callback: (result: CompletionResult<CommandResponse>) -> Unit) {
+        val checker = NetworkChecker.getInstance()
+        val isConnected = checker.activeNetworkIsConnected()
+        if (!isConnected) callback(CompletionResult.Failure(NoInternetConnection()))
+    }
 }
 
 class SomeSuccessResponse : CommandResponse {
