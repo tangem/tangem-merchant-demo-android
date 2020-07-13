@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fg_main.*
 import ru.dev.gbixahue.eu4d.lib.android._android.components.stringFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
+import ru.dev.gbixahue.eu4d.lib.android.global.threading.postUI
 
 
 /**
@@ -58,8 +59,8 @@ class MainFragment : BaseFragment() {
         loadingButton.setupIndeterminateProgress(requireContext())
         btnCharge.setOnClickListener {
             val sdk = TangemSdk.init(requireActivity())
-            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData()){
-                tvFeeValue.text = it?.toString() ?: ""
+            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData()) {
+                postUI { tvFeeValue.text = it?.toDouble()?.toString() ?: "0" }
             }) {
                 Log.d(this, "the charge session complete")
             }
@@ -102,7 +103,7 @@ class MainFragment : BaseFragment() {
         mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
             loadingButton.setState(ProgressState.Progress())
             tvFiatValue.text = it.localizedValue
-            tvFeeValue.text = ""
+            tvFeeValue.text = "0"
             mainVM.calculateConversion()
         })
     }
