@@ -65,10 +65,18 @@ class ChargeSession(
         val amount = Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
 
         scope.launch {
-            val txSender = walletManager as TransactionSender
-            walletManager.update()
+            try {
+                Log.d(this, "Update wallet")
+                walletManager.update()
+            } catch (ex: Exception) {
+                Log.e(this, ex)
+                callback(CompletionResult.Failure(ThrowableError(ex)))
+                return@launch
+            }
 
             checkNetworkAvailabilityAndNotify(callback)
+            Log.d(this, "Get fee")
+            val txSender = walletManager as TransactionSender
             when (val feeResult = txSender.getFee(amount, destBlcItem.address)) {
                 is Result.Success -> {
                     Log.d(this, "Getting fee success")
