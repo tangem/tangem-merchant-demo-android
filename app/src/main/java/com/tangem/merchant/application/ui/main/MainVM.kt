@@ -87,19 +87,24 @@ class MainVM : BlcItemListVM() {
     }
 
     private fun loadFiatCurrencyList() {
-        val list = fiatCurrencyListStore.restore()
-        if (list.isEmpty()) {
+        val currencyList = fiatCurrencyListStore.restore()
+        fun sortCurrencies(list: List<FiatCurrency>){
+            Collections.sort(list, kotlin.Comparator { o1, o2 ->  o1.name.compareTo(o2.name)})
+        }
+        if (currencyList.isEmpty()) {
             if (!checkNetworkAvailabilityAndNotify()) return
 
             coinMarket.loadFiatMap {
+                sortCurrencies(it)
                 fiatCurrencyListLD.postValue(it)
                 fiatCurrencyListStore.save(it)
             }
         } else {
-            fiatCurrencyListLD.postValue(list)
+            fiatCurrencyListLD.postValue(currencyList)
             if (!checkNetworkAvailabilityAndNotify()) return
 
             coinMarket.loadFiatMap {
+                sortCurrencies(it)
                 fiatCurrencyListLD.postValue(it)
                 fiatCurrencyListStore.save(it)
             }
