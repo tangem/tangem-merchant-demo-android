@@ -152,7 +152,7 @@ class MainVM : BlcItemListVM() {
         return merchant.fiatCurrency?.symbol ?: Currency.getInstance(Locale.getDefault()).currencyCode
     }
 
-    fun calculateConversion() {
+    fun calculateConversion(calculationStarted: (() -> Unit)? = null) {
         val fiatValue = fiatValueLD.value ?: return
         if (fiatValue.stringValue == "0") {
             convertedFiatValueLD.postValue(BigDecimal.ZERO)
@@ -169,6 +169,8 @@ class MainVM : BlcItemListVM() {
                 convertedFiatValueLD.postValue(convertedFiatValueLD.value)
                 return@launch
             }
+
+            calculationStarted?.invoke()
             val blcItem = selectedBlcItemLD.value ?: return@launch
             val currencyList = fiatCurrencyListLD.value ?: return@launch
             val fiatCurrency = merchantFiatCurrencyLD.value ?: return@launch

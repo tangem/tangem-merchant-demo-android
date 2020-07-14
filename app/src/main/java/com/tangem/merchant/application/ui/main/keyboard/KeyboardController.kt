@@ -23,7 +23,8 @@ class NumberKeyboardController(
             if (oldStringValue.length == 1) oldStringValue
             else oldStringValue.substring(0, oldStringValue.length - 1)
         } else {
-            oldStringValue + sign
+            if (oldStringValue == "0" && sign == "0") oldStringValue
+            else oldStringValue + sign
         }
         fiatValue = FiatValue.create(newStringValue, currencyCode)
         onUpdate?.invoke(fiatValue)

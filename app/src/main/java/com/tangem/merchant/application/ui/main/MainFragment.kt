@@ -99,10 +99,9 @@ class MainFragment : BaseFragment() {
 
     private fun listenNumberKeyboardChanges() {
         mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
-            loadingButton.setState(ProgressState.Progress())
             tvFiatValue.text = it.localizedValue
             tvFeeValue.text = "0"
-            mainVM.calculateConversion()
+            mainVM.calculateConversion { postUI { loadingButton.setState(ProgressState.Progress()) } }
         })
     }
 
