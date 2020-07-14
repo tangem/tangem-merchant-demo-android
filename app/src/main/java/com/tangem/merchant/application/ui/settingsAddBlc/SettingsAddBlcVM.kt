@@ -61,7 +61,6 @@ class SettingsAddBlcVM : BlcItemListVM() {
         this.blcItem = blcItem
         blcItemLD.value = blcItem
         isAddBlcBtnEnabledLD.value = blcItemIsReady() && blcAddressIsValid()
-        isAddBlcBtnEnabledLD.value = blcItemIsReady()
     }
 
     private fun blcAddressIsValid(): Boolean {
