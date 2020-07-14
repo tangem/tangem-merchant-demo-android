@@ -157,6 +157,7 @@ class FiatCurrencySpinnerAdapter(
     context: Context,
     itemList: List<FiatCurrency>
 ) : BaseHintAdapter<FiatCurrency>(context, itemList.toMutableList(), R.string.spinner_hint_fiat_currency) {
-    override fun getLabelFor(item: FiatCurrency): String = "${item.sign} - ${item.symbol}"
+//    United States Dollar (USD) - $
+    override fun getLabelFor(item: FiatCurrency): String = "${item.name} (${item.symbol}) - ${item.sign}"
 }
 
