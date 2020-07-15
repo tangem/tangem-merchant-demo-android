@@ -60,3 +60,17 @@ class ShowHideStateModifier(
         }
     }
 }
+
+class ClickableStateModifier(
+    private val isClickableOnLoading: Boolean = false
+) : StateModifier {
+
+    override fun stateChanged(container: ViewGroup, view: View, state: ToggleState) {
+        view.isClickable = when (state) {
+            is ProgressState.Progress -> isClickableOnLoading
+            is ProgressState.None -> !isClickableOnLoading
+            else -> return
+
+        }
+    }
+}

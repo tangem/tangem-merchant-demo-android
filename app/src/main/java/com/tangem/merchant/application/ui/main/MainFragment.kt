@@ -48,12 +48,12 @@ class MainFragment : BaseFragment() {
         listenNumberKeyboardChanges()
         listenConversionChanges()
         listenFeeCalculation()
-        listenLockUiStateChanges()
     }
 
     private fun initChargeButton() {
         loadingButton = ToggleWidget(flTest, btnCharge, progress, ProgressState.None())
-        loadingButton.setupIndeterminateProgress(requireContext())
+        loadingButton.setupIndeterminateProgressV2(requireContext())
+        loadingButton.setState(ProgressState.None())
         btnCharge.setOnClickListener { mainVM.startChargeSession(TangemSdk.init(requireActivity())) }
     }
 
@@ -90,7 +90,7 @@ class MainFragment : BaseFragment() {
     private fun listenNumberKeyboardChanges() {
         mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
             tvFiatValue.text = it.localizedValue
-            mainVM.calculateConversion { postUI { loadingButton.setState(ProgressState.Progress()) } }
+            mainVM.calculateConversion { postUI { loadingButton.setState(it) } }
         })
     }
 
@@ -103,12 +103,6 @@ class MainFragment : BaseFragment() {
 
     private fun listenFeeCalculation() {
 //        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
-    }
-
-    private fun listenLockUiStateChanges() {
-        mainVM.getUiLockState().observe(viewLifecycleOwner, Observer {
-            btnCharge.isEnabled = it
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -151,6 +145,14 @@ fun ToggleWidget.setupIndeterminateProgress(context: Context) {
     mainViewStateModifiers.clear()
     mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
     mainViewStateModifiers.add(EnableDisableStateModifier())
+    toggleStateModifiers.clear()
+    toggleStateModifiers.add(ShowHideStateModifier())
+}
+
+fun ToggleWidget.setupIndeterminateProgressV2(context: Context) {
+    mainViewStateModifiers.clear()
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(ClickableStateModifier())
     toggleStateModifiers.clear()
     toggleStateModifiers.add(ShowHideStateModifier())
 }

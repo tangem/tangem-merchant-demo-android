@@ -23,6 +23,7 @@ import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
 import com.tangem.merchant.common.AppDataChecker
 import com.tangem.merchant.common.FirstLaunchChecker
+import com.tangem.merchant.common.toggleWidget.ProgressState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
@@ -175,7 +176,7 @@ class MainVM : BlcItemListVM() {
         return merchant.fiatCurrency?.symbol ?: Currency.getInstance(Locale.getDefault()).currencyCode
     }
 
-    fun calculateConversion(calculationStarted: (() -> Unit)? = null) {
+    fun calculateConversion(progressStateHandler: ((ProgressState) -> Unit)? = null) {
         val fiatValue = fiatValueLD.value ?: return
         if (fiatValue.stringValue == "0") {
             convertedFiatValueLD.postValue(BigDecimal.ZERO)
@@ -183,17 +184,18 @@ class MainVM : BlcItemListVM() {
             return
         }
 
+        progressStateHandler?.invoke(ProgressState.Progress())
         coinMarket.scope.launch {
-            delay(450)
+            delay(600)
             if (fiatValue.value != fiatValueLD.value?.value) return@launch
             // end of delay
 
             if (!checkNetworkAvailabilityAndNotify()) {
                 convertedFiatValueLD.postValue(convertedFiatValueLD.value)
+                progressStateHandler?.invoke(ProgressState.None())
                 return@launch
             }
 
-            calculationStarted?.invoke()
             val blcItem = selectedBlcItemLD.value ?: return@launch
             val currencyList = fiatCurrencyListLD.value ?: return@launch
             val fiatCurrency = merchantFiatCurrencyLD.value ?: return@launch
@@ -201,6 +203,7 @@ class MainVM : BlcItemListVM() {
             val currency = currencyList.firstOrNull { it.symbol == fiatCurrency.symbol }
             if (currency == null) {
                 errorMessageSLE.postValue(AppError.UnsupportedConversion())
+                progressStateHandler?.invoke(ProgressState.None())
                 return@launch
             }
 
@@ -208,7 +211,7 @@ class MainVM : BlcItemListVM() {
                 fiatValue.value,
                 blcItem.blockchain,
                 currency,
-                { uiIsEnabledLD.postValue(it) },
+                progressStateHandler,
                 {
                     chargeData = chargeData.copy(writeOfValue = it)
                     convertedFiatValueLD.postValue(it)

@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.network.httpService.createMoshi
+import com.tangem.merchant.common.toggleWidget.ProgressState
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.math.BigDecimal
@@ -53,26 +54,23 @@ class CoinMarket(
         value: BigDecimal,
         blockchain: Blockchain,
         currency: FiatCurrency,
-        callbackUiStateIsActive: (Boolean) -> Unit,
+        progressStateHandler: ((ProgressState) -> Unit)? = null,
         callbackConversion: (BigDecimal) -> Unit
     ) {
         if (conversionInActiveState) return
 
         conversionInActiveState = true
         scope.launch {
-            callbackUiStateIsActive(false)
-
             val conversion = coinMarketApi.getPriceConversion(value, currency.id, blockchain.currency)
             val conversionPrice = conversion.data.getQuotes()[blockchain.currency]
             if (conversionPrice == null) {
                 conversionInActiveState = false
                 errorMessageHandler(AppError.ConversionError())
-                return@launch
             } else {
                 callbackConversion(conversionPrice.price)
-                callbackUiStateIsActive(true)
                 conversionInActiveState = false
             }
+            progressStateHandler?.invoke(ProgressState.None())
         }
     }
 }
