@@ -42,6 +42,11 @@ class SameWalletAddress(
     override var customMessage: String = "Source and destination address is the same"
 ): BaseError()
 
+class BlockchainInternalError(
+    override var customMessage: String
+): BaseError() {
+    override val code: Int = 20000
+}
 
 
 

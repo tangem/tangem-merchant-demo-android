@@ -62,7 +62,8 @@ class ChargeSession(
 
         checkNetworkAvailabilityAndNotify(callback)
         // address в Amount важен только при использовании токена
-        val amount = Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
+        val amount =
+            Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
 
         scope.launch {
             try {
@@ -70,7 +71,7 @@ class ChargeSession(
                 walletManager.update()
             } catch (ex: Exception) {
                 Log.e(this, ex)
-                callback(CompletionResult.Failure(ThrowableError(ex)))
+                callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(ex)))
                 return@launch
             }
 
@@ -101,13 +102,13 @@ class ChargeSession(
                         }
                         is SimpleResult.Failure -> {
                             Log.e(this, "Error: ${result.error}")
-                            callback(CompletionResult.Failure(TransactionSendError(result.error)))
+                            callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(result.error)))
                         }
                     }
                 }
                 is Result.Failure -> {
                     Log.e(this, "Error: ${feeResult.error}")
-                    callback(CompletionResult.Failure(ThrowableError(feeResult.error)))
+                    callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(feeResult.error)))
                 }
             }
         }
@@ -138,7 +139,7 @@ class ChargeSession(
         return amount.isAboveZero() && walletManager.wallet.fundsAvailable(amount.type) >= amount.value
     }
 
-    private fun isDifferentWalletAddress(srcAddress: String, destAddress: String):Boolean = srcAddress != destAddress
+    private fun isDifferentWalletAddress(srcAddress: String, destAddress: String): Boolean = srcAddress != destAddress
 
     private fun checkNetworkAvailabilityAndNotify(callback: (result: CompletionResult<CommandResponse>) -> Unit) {
         val checker = NetworkChecker.getInstance()
