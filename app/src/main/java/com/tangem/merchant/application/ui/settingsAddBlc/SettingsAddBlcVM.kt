@@ -8,6 +8,7 @@ import com.tangem.blockchain.common.Token
 import com.tangem.blockchain.common.Wallet
 import com.tangem.commands.Card
 import com.tangem.common.CompletionResult
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.MainVM
@@ -60,7 +61,9 @@ class SettingsAddBlcVM : BlcItemListVM() {
     private fun updateBlcItem(blcItem: BlockchainItem) {
         this.blcItem = blcItem
         blcItemLD.value = blcItem
-        isAddBlcBtnEnabledLD.value = blcItemIsReady() && blcAddressIsValid()
+        val isDuplicate = isBlcItemDuplicate()
+        if (isDuplicate) errorMessageSLE.value = AppError.CantAddDuplicateWallet()
+        isAddBlcBtnEnabledLD.value = blcItemIsReady() && blcAddressIsValid() && !isDuplicate
     }
 
     private fun blcAddressIsValid(): Boolean {
@@ -69,6 +72,13 @@ class SettingsAddBlcVM : BlcItemListVM() {
     }
 
     private fun blcItemIsReady(): Boolean = blcItem.address.isNotEmpty() && blcItem.blockchain != Blockchain.Unknown
+
+    private fun isBlcItemDuplicate(): Boolean {
+        val matchedList = blcItemListLD.value?.filter {
+            it.blockchain == blcItem.blockchain && it.address == blcItem.address
+        } ?: return false
+        return matchedList.isNotEmpty()
+    }
 
     // only for debug mode
     fun addBlcItemFromCard(sdk: TangemSdk) {

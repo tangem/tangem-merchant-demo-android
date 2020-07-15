@@ -24,5 +24,6 @@
     <string name="e_coin_market_conversion_error">Conversion error</string>
     <string name="e_lost_internet_connection">There is no internet connection. Please check your connection and try again</string>
     <string name="payment_transaction_complete">Transaction completed successfully</string>
+    <string name="e_cant_add_duplicate_wallet">Can not add duplicate wallet</string>
 
 </resources>

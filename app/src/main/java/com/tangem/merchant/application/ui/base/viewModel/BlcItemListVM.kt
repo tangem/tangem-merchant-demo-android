@@ -2,14 +2,13 @@ package com.tangem.merchant.application.ui.base.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.store.BlcListStore
 
 /**
  * Created by Anton Zhilenkov on 29/06/2020.
  */
-open class BlcItemListVM : ViewModel() {
+open class BlcItemListVM : BaseVM() {
     protected val blcItemListLD = MutableLiveData<MutableList<BlockchainItem>>()
     protected val blcListStore = BlcListStore()
 

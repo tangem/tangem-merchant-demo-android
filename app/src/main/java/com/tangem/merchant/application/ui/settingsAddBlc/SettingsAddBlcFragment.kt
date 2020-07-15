@@ -16,6 +16,7 @@ import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.BuildConfig
 import com.tangem.merchant.R
+import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.application.ui.base.adapter.spinner.BaseHintAdapter
 import com.tangem.merchant.application.ui.main.MainVM
@@ -38,6 +39,7 @@ class SettingsAddBlcFragment : BaseFragment() {
         initSpinner()
         initAddress()
         initAddBlcButton()
+        listenErrors()
         if (BuildConfig.DEBUG) enableDebugMenu()
     }
 
@@ -77,6 +79,14 @@ class SettingsAddBlcFragment : BaseFragment() {
         })
     }
 
+    private fun listenErrors() {
+        settingsAddBlcVM.errorMessageSLE.observe(this, Observer {
+            when (it) {
+                is AppError.CantAddDuplicateWallet -> showSnackbar(R.string.e_cant_add_duplicate_wallet)
+            }
+        })
+    }
+
     // only for debug mode
     private fun enableDebugMenu() {
         setHasOptionsMenu(true)
@@ -98,7 +108,7 @@ class SettingsAddBlcFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (!BuildConfig.DEBUG) return false
 
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.menu_action_add_blockchain -> {
                 val sdk = TangemSdk.init(requireActivity())
                 settingsAddBlcVM.addBlcItemFromCard(sdk)

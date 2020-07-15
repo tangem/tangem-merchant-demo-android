@@ -18,7 +18,6 @@ import com.tangem.merchant.application.ui.base.viewModel.BlcItemListVM
 import com.tangem.merchant.application.ui.main.keyboard.NumberKeyboardController
 import com.tangem.merchant.common.AppDataChecker
 import com.tangem.merchant.common.FirstLaunchChecker
-import com.tangem.merchant.common.SingleLiveEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -36,7 +35,6 @@ class MainVM : BlcItemListVM() {
     lateinit var keyboardController: NumberKeyboardController
 
     val networkChecker: NetworkChecker = NetworkChecker.getInstance()
-    val errorMessageSLE = SingleLiveEvent<AppError>()
 
     private val coinMarket = CoinMarket() { errorMessageSLE.postValue(it) }
 
