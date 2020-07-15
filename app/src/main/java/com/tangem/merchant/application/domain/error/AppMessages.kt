@@ -11,3 +11,7 @@ sealed class AppError {
     class CantAddDuplicateWallet: AppError()
     class NoInternetConnection: AppError()
 }
+
+sealed class AppMessage {
+    class ChargeSessionCompleted: AppMessage()
+}

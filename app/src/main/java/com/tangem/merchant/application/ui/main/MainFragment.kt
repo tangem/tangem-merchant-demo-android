@@ -13,7 +13,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.merchant.R
-import com.tangem.merchant.application.domain.charge.ChargeSession
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.ui.base.BaseFragment
 import com.tangem.merchant.common.toggleWidget.*
@@ -21,7 +20,6 @@ import com.tangem.tangem_sdk_new.extensions.init
 import kotlinx.android.synthetic.main.fg_main.*
 import ru.dev.gbixahue.eu4d.lib.android._android.components.stringFrom
 import ru.dev.gbixahue.eu4d.lib.android._android.views.inflate
-import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 import ru.dev.gbixahue.eu4d.lib.android.global.threading.postUI
 
 
@@ -49,21 +47,14 @@ class MainFragment : BaseFragment() {
         listenMerchantChanges()
         listenNumberKeyboardChanges()
         listenConversionChanges()
+        listenFeeCalculation()
         listenLockUiStateChanges()
     }
 
     private fun initChargeButton() {
         loadingButton = ToggleWidget(flTest, btnCharge, progress, ProgressState.None())
         loadingButton.setupIndeterminateProgress(requireContext())
-        btnCharge.setOnClickListener {
-            val sdk = TangemSdk.init(requireActivity())
-            sdk.startSessionWithRunnable(ChargeSession(mainVM.getChargeData()) {
-                postUI { tvFeeValue.text = it?.toDouble()?.toString() ?: "0" }
-            }) {
-                Log.d(this, "the charge session complete")
-                showSnackbar(R.string.payment_transaction_complete)
-            }
-        }
+        btnCharge.setOnClickListener { mainVM.startChargeSession(TangemSdk.init(requireActivity())) }
     }
 
     private fun setupKeyboard() {
@@ -111,6 +102,10 @@ class MainFragment : BaseFragment() {
             tvBlockchainValue.text = it.toString()
             loadingButton.setState(ProgressState.None())
         })
+    }
+
+    private fun listenFeeCalculation() {
+        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
     }
 
     private fun listenLockUiStateChanges() {

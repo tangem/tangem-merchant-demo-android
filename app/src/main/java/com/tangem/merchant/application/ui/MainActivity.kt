@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import com.tangem.merchant.R
 import com.tangem.merchant.application.domain.error.AppError
+import com.tangem.merchant.application.domain.error.AppMessage
 import com.tangem.merchant.application.ui.main.MainVM
 import com.tangem.merchant.common.SnackbarHolder
 import com.tangem.merchant.common.navigation.NavDestinationLogger
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
         setContentView(R.layout.a_main)
 
         setupNavController()
+        listenMessages()
         listenErrors()
     }
 
@@ -81,6 +83,14 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
         Snackbar.make(nav_host_fragment,  message, length).show()
     }
 
+    private fun listenMessages() {
+        mainVM.messageSLE.observe(this, Observer {
+            when (it) {
+                is AppMessage.ChargeSessionCompleted -> showSnackbar(R.string.payment_transaction_complete)
+            }
+        })
+    }
+
     private fun listenErrors() {
         mainVM.errorMessageSLE.observe(this, Observer {
             when (it) {
@@ -88,6 +98,7 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
                 is AppError.UnsupportedConversion -> showSnackbar(R.string.e_unsupported_conversion)
                 is AppError.ConversionError -> showSnackbar(R.string.e_coin_market_conversion_error)
                 is AppError.CoinMarketHttpError -> showSnackbar(it.errorMessage)
+                is AppError.CoinMarketHttpError -> showSnackbar(R.string.payment_transaction_complete)
                 is AppError.NoInternetConnection -> showSnackbar(R.string.e_lost_internet_connection)
             }
         })

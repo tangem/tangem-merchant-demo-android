@@ -2,8 +2,13 @@ package com.tangem.merchant.application.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
+import com.tangem.commands.CommandResponse
+import com.tangem.common.CompletionResult
+import com.tangem.merchant.application.domain.charge.ChargeSession
 import com.tangem.merchant.application.domain.error.AppError
+import com.tangem.merchant.application.domain.error.AppMessage
 import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.ChargeData
 import com.tangem.merchant.application.domain.model.FiatValue
@@ -20,6 +25,8 @@ import com.tangem.merchant.common.AppDataChecker
 import com.tangem.merchant.common.FirstLaunchChecker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
+import ru.dev.gbixahue.eu4d.lib.android.global.threading.postUI
 import java.math.BigDecimal
 import java.util.*
 
@@ -47,6 +54,7 @@ class MainVM : BlcItemListVM() {
 
     private val fiatValueLD = MutableLiveData<FiatValue>()
     private val convertedFiatValueLD = MutableLiveData<BigDecimal>(BigDecimal.ZERO)
+    private val calculatedFeeValueLD = MutableLiveData<String>("0")
     private val fiatCurrencyListLD = MutableLiveData<List<FiatCurrency>>(listOf())
     private val fiatCurrencyListStore = FiatCurrencyListStore()
 
@@ -59,6 +67,7 @@ class MainVM : BlcItemListVM() {
     fun getMerchantFiatCurrency(): LiveData<FiatCurrency> = merchantFiatCurrencyLD
     fun getFiatValue(): LiveData<FiatValue> = fiatValueLD
     fun getConvertedFiatValue(): LiveData<BigDecimal> = convertedFiatValueLD
+    fun getCalculatedFeeValue(): LiveData<String> = calculatedFeeValueLD
     fun getFiatCurrencyList(): LiveData<List<FiatCurrency>> = fiatCurrencyListLD
     fun getSelectedBlcItem(): LiveData<BlockchainItem> = selectedBlcItemLD
     fun getUiLockState(): LiveData<Boolean> = uiIsEnabledLD
@@ -86,8 +95,8 @@ class MainVM : BlcItemListVM() {
 
     private fun loadFiatCurrencyList() {
         val currencyList = fiatCurrencyListStore.restore()
-        fun sortCurrencies(list: List<FiatCurrency>){
-            Collections.sort(list, kotlin.Comparator { o1, o2 ->  o1.name.compareTo(o2.name)})
+        fun sortCurrencies(list: List<FiatCurrency>) {
+            Collections.sort(list, kotlin.Comparator { o1, o2 -> o1.name.compareTo(o2.name) })
         }
         if (currencyList.isEmpty()) {
             if (!checkNetworkAvailabilityAndNotify()) return
@@ -147,6 +156,17 @@ class MainVM : BlcItemListVM() {
         selectedBlcItemLD.value = blcItem
     }
 
+    fun chargeSessionCompleted(result: CompletionResult<CommandResponse>) {
+        when (result) {
+            is CompletionResult.Success -> {
+                keyboardController.reset()
+                messageSLE.value = AppMessage.ChargeSessionCompleted()
+            }
+            is CompletionResult.Failure -> {
+            }
+        }
+    }
+
     private fun createFiatValue(merchant: Merchant, oldFiatValue: FiatValue? = null): FiatValue {
         return FiatValue.create(oldFiatValue?.stringValue ?: initialFiatValue, getCurrencyCode(merchant))
     }
@@ -201,5 +221,14 @@ class MainVM : BlcItemListVM() {
         val isConnected = networkChecker.activeNetworkIsConnected()
         if (!isConnected) errorMessageSLE.postValue(AppError.NoInternetConnection())
         return isConnected
+    }
+
+    fun startChargeSession(sdk: TangemSdk) {
+        sdk.startSessionWithRunnable(ChargeSession(getChargeData()) {
+            calculatedFeeValueLD.postValue(it?.toDouble()?.toString() ?: "0")
+        }) {
+            Log.d(this, "the charge session complete")
+            postUI { chargeSessionCompleted(it) }
+        }
     }
 }

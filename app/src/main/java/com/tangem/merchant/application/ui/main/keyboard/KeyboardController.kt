@@ -21,9 +21,15 @@ class NumberKeyboardController(
         onUpdate?.invoke(fiatValue)
     }
 
+    fun reset() {
+        fiatValue = FiatValue.create("0", currencyCode)
+        Log.d(this, "FiatValue changed to: $fiatValue")
+        onUpdate?.invoke(fiatValue)
+    }
+
     override fun onKeyboardClick(view: KeyboardButtonView, buttonCode: KeyboardButtonEnum, value: Any) {
         val sign = getSign(buttonCode)
-        if (fiatValue.stringValue.length -1 == maxDigits && sign != null) {
+        if (fiatValue.stringValue.length - 1 == maxDigits && sign != null) {
             Log.e(this, "max length reached")
             onMaxLengthError?.invoke();
             return
