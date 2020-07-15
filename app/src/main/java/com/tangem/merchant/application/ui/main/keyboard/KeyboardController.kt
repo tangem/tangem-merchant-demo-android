@@ -2,6 +2,8 @@ package com.tangem.merchant.application.ui.main.keyboard
 
 import com.tangem.merchant.application.domain.model.FiatValue
 import com.tangem.merchant.application.ui.main.keyboard.KeyboardButtonEnum.*
+import com.tangem.merchant.common.VoidCallback
+import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 
 /**
  * Created by Anton Zhilenkov on 25/06/2020.
@@ -9,8 +11,11 @@ import com.tangem.merchant.application.ui.main.keyboard.KeyboardButtonEnum.*
 class NumberKeyboardController(
     private val currencyCode: String,
     private var fiatValue: FiatValue = FiatValue.create("0", currencyCode),
+    private val maxDigits: Int = 10,
     var onUpdate: ((FiatValue) -> Unit)? = null
 ) : KeyboardButtonClickedListener {
+
+    var onMaxLengthError: VoidCallback? = null
 
     init {
         onUpdate?.invoke(fiatValue)
@@ -18,6 +23,13 @@ class NumberKeyboardController(
 
     override fun onKeyboardClick(view: KeyboardButtonView, buttonCode: KeyboardButtonEnum, value: Any) {
         val sign = getSign(buttonCode)
+        if (fiatValue.stringValue.length -1 == maxDigits && sign != null) {
+            Log.e(this, "max length reached")
+            onMaxLengthError?.invoke();
+            return
+        }
+
+        Log.d(this, "add sign: $sign")
         val oldStringValue = fiatValue.stringValue
         val newStringValue = if (sign == null) {
             if (oldStringValue.length == 1) oldStringValue
@@ -27,6 +39,7 @@ class NumberKeyboardController(
             else oldStringValue + sign
         }
         fiatValue = FiatValue.create(newStringValue, currencyCode)
+        Log.d(this, "FiatValue changed to: $fiatValue")
         onUpdate?.invoke(fiatValue)
     }
 

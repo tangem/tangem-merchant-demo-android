@@ -133,7 +133,7 @@ class MainVM : BlcItemListVM() {
         val code = getCurrencyCode(merchant)
         val fiat = fiatValueLD.value ?: createFiatValue(merchant)
         if (::keyboardController.isInitialized) {
-            keyboardController = NumberKeyboardController(code, fiat, keyboardController.onUpdate)
+            keyboardController = NumberKeyboardController(code, fiat, onUpdate = keyboardController.onUpdate)
         } else {
             keyboardController = NumberKeyboardController(code, fiat)
         }
