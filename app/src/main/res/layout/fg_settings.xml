@@ -28,7 +28,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_merchant_title"
-                app:boxBackgroundColor="@android:color/transparent">
+                android:textColorHint="@color/textSecondaryLight"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="@color/textSecondaryLight">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMerchantTitle"
@@ -110,8 +112,10 @@
                         android:id="@+id/tvAddBlc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/title_add_blc"
                         android:textColor="@color/textPrimary"
+                        android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -136,13 +140,12 @@
 
         <Button
             android:id="@+id/btnLaunchApp"
+            style="@style/ButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="46dp"
             android:layout_marginEnd="46dp"
             android:layout_marginBottom="30dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
             android:text="@string/btn_launch"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

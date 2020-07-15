@@ -58,8 +58,6 @@ class MainFragment : BaseFragment() {
     }
 
     private fun setupKeyboard() {
-        keyboard.setTextSize(37f)
-        keyboard.setTextColor(R.color.textPrimary)
         keyboard.setKeyboardButtonClickedListener(mainVM.keyboardController)
     }
 
