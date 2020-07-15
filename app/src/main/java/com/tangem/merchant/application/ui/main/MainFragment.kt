@@ -61,6 +61,7 @@ class MainFragment : BaseFragment() {
                 postUI { tvFeeValue.text = it?.toDouble()?.toString() ?: "0" }
             }) {
                 Log.d(this, "the charge session complete")
+                showSnackbar(R.string.payment_transaction_complete)
             }
         }
     }

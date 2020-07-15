@@ -37,7 +37,7 @@ class ChargeSession(
 
         val destBlcItem = data.blcItem
         if (destBlcItem.blockchain.id != card.cardData?.blockchainName) {
-            Log.e(this, "Error: Blockchain didn't match")
+            Log.e(this, "Error: Blockchain do not match")
             callback(CompletionResult.Failure(BlockchainDidNotMatch()))
             return
         }

@@ -23,5 +23,6 @@
     <string name="e_unsupported_conversion">Unsupported conversion</string>
     <string name="e_coin_market_conversion_error">Conversion error</string>
     <string name="e_lost_internet_connection">There is no internet connection. Please check your connection and try again</string>
+    <string name="payment_transaction_complete">Transaction completed successfully</string>
 
 </resources>
