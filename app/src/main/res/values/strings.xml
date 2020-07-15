@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Merchant</string>
+    <string name="app_name">Tangem Take</string>
 
     <!--  Screen titles  -->
     <string name="screen_title_settings">Settings</string>

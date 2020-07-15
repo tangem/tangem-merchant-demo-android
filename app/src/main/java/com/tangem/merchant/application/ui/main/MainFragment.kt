@@ -89,7 +89,7 @@ class MainFragment : BaseFragment() {
                 if (blcItem.blockchain == Blockchain.Unknown) return@Observer
 
                 spBlockchain.setSelection(blcList.indexOf(blcItem))
-                tvBlockchainCurrency.text = blcItem.blockchain.id
+                tvBlockchainCurrency.text = blcItem.blockchain.currency
             })
         })
     }
