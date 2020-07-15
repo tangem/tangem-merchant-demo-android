@@ -90,7 +90,6 @@ class MainFragment : BaseFragment() {
     private fun listenNumberKeyboardChanges() {
         mainVM.getFiatValue().observe(viewLifecycleOwner, Observer {
             tvFiatValue.text = it.localizedValue
-            tvFeeValue.text = "0"
             mainVM.calculateConversion { postUI { loadingButton.setState(ProgressState.Progress()) } }
         })
     }
@@ -103,7 +102,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun listenFeeCalculation() {
-        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
+//        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
     }
 
     private fun listenLockUiStateChanges() {
