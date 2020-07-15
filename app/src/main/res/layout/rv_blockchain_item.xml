@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@drawable/bg_rounded_rectangle"
+    android:background="@drawable/bg_rounded_rectangle_blockchain"
     android:minHeight="66dp">
 
     <TextView
