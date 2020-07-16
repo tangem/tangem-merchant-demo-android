@@ -27,7 +27,7 @@ class NoInternetConnection: BaseError() {
     override var customMessage: String = "There is no internet connection. Please check your connection and try again"
 }
 
-class BlockchainDidNotMatch : BaseError() {
+class BlockchainDoNotMatch : BaseError() {
     override val code: Int = 10010
     override var customMessage: String = "Blockchain do not match"
 }

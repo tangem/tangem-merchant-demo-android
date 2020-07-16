@@ -102,7 +102,9 @@ class MainFragment : BaseFragment() {
     }
 
     private fun listenFeeCalculation() {
-//        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
+        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer {
+//            tvFeeValue.text = it
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

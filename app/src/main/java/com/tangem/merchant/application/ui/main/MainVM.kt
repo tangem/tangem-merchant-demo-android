@@ -55,7 +55,7 @@ class MainVM : BlcItemListVM() {
 
     private val fiatValueLD = MutableLiveData<FiatValue>()
     private val convertedFiatValueLD = MutableLiveData<BigDecimal>(BigDecimal.ZERO)
-    private val calculatedFeeValueLD = MutableLiveData<String>("0")
+    private val calculatedFeeValueLD = MutableLiveData<String>("")
     private val fiatCurrencyListLD = MutableLiveData<List<FiatCurrency>>(listOf())
     private val fiatCurrencyListStore = FiatCurrencyListStore()
 
@@ -228,7 +228,9 @@ class MainVM : BlcItemListVM() {
 
     fun startChargeSession(sdk: TangemSdk) {
         sdk.startSessionWithRunnable(ChargeSession(getChargeData()) {
-            calculatedFeeValueLD.postValue(it?.toDouble()?.toString() ?: "0")
+            Log.d(this, "Calculated fee: BigDecimal: $it")
+            Log.d(this, "Calculated fee: BigDecimal.toPlainString: ${it?.toPlainString()}")
+            calculatedFeeValueLD.postValue(it?.toPlainString() ?: "")
         }) {
             Log.d(this, "the charge session complete")
             postUI { chargeSessionCompleted(it) }

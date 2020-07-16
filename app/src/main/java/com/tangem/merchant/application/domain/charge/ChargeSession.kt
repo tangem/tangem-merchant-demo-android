@@ -3,10 +3,12 @@ package com.tangem.merchant.application.domain.charge
 import com.tangem.CardSession
 import com.tangem.CardSessionRunnable
 import com.tangem.TangemSdkError
-import com.tangem.blockchain.common.*
+import com.tangem.blockchain.common.Amount
+import com.tangem.blockchain.common.Blockchain
+import com.tangem.blockchain.common.TransactionSender
+import com.tangem.blockchain.common.WalletManagerFactory
 import com.tangem.blockchain.extensions.Result
 import com.tangem.blockchain.extensions.SimpleResult
-import com.tangem.blockchain.extensions.isAboveZero
 import com.tangem.commands.CommandResponse
 import com.tangem.common.CompletionResult
 import com.tangem.merchant.application.domain.model.ChargeData
@@ -15,7 +17,6 @@ import kotlinx.coroutines.*
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
 
 class ChargeSession(
     private val data: ChargeData,
@@ -38,7 +39,7 @@ class ChargeSession(
         val destBlcItem = data.blcItem
         if (destBlcItem.blockchain.id != card.cardData?.blockchainName) {
             Log.e(this, "Error: Blockchain do not match")
-            callback(CompletionResult.Failure(BlockchainDidNotMatch()))
+            callback(CompletionResult.Failure(BlockchainDoNotMatch()))
             return
         }
 
@@ -70,7 +71,7 @@ class ChargeSession(
                 Log.d(this, "Update wallet")
                 walletManager.update()
             } catch (ex: Exception) {
-                Log.e(this, ex)
+                Log.e(this, "Error: Update wallet: $ex")
                 callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(ex)))
                 return@launch
             }
@@ -86,7 +87,7 @@ class ChargeSession(
 
                     feeCallback(feeAmount.value)
                     val txData = walletManager.createTransaction(amount, feeAmount, destBlcItem.address)
-                    val errors = validateTransaction(amount, feeAmount, walletManager)
+                    val errors = walletManager.validateTransaction(amount, feeAmount)
                     if (errors.isNotEmpty()) {
                         Log.d(this, "Error: Validate transaction error")
                         callback(CompletionResult.Failure(ValidationTransactionTransaction.from(errors)))
@@ -97,17 +98,17 @@ class ChargeSession(
                     checkNetworkAvailabilityAndNotify(callback)
                     when (val result = txSender.send(txData, SessionTransactionSigner(session))) {
                         is SimpleResult.Success -> {
-                            Log.d(this, "Getting fee is success")
+                            Log.d(this, "Sending transaction is success")
                             callback(CompletionResult.Success(SomeSuccessResponse()))
                         }
                         is SimpleResult.Failure -> {
-                            Log.e(this, "Error: ${result.error}")
+                            Log.e(this, "Error: Sending transaction: ${result.error}")
                             callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(result.error)))
                         }
                     }
                 }
                 is Result.Failure -> {
-                    Log.e(this, "Error: ${feeResult.error}")
+                    Log.e(this, "Error: Getting fee: ${feeResult.error}")
                     callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(feeResult.error)))
                 }
             }
@@ -116,27 +117,6 @@ class ChargeSession(
 
     private fun castDecimals(value: BigDecimal, blockchain: Blockchain): BigDecimal {
         return value.setScale(blockchain.decimals(), RoundingMode.HALF_UP)
-    }
-
-    private fun validateTransaction(
-        amount: Amount,
-        fee: Amount?,
-        walletManager: WalletManager
-    ): EnumSet<TransactionError> {
-        val errors = EnumSet.noneOf(TransactionError::class.java)
-
-        if (!validateAmount(amount, walletManager)) errors.add(TransactionError.WrongAmount)
-        if (fee == null) return errors
-
-        if (!validateAmount(fee, walletManager)) errors.add(TransactionError.WrongFee)
-        val total = (amount.value ?: BigDecimal.ZERO) + (fee.value ?: BigDecimal.ZERO)
-        if (!validateAmount(Amount(amount, total), walletManager)) errors.add(TransactionError.WrongTotal)
-
-        return errors
-    }
-
-    private fun validateAmount(amount: Amount, walletManager: WalletManager): Boolean {
-        return amount.isAboveZero() && walletManager.wallet.fundsAvailable(amount.type) >= amount.value
     }
 
     private fun isDifferentWalletAddress(srcAddress: String, destAddress: String): Boolean = srcAddress != destAddress
