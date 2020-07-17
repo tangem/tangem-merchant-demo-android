@@ -31,7 +31,7 @@ class BlockchainNotSupportedByWalletManager : BaseError() {
     override var customMessage: String = "Blockchain not support"
 }
 
-class BlockchainNotSupported(blockchainName: String) : BaseError() {
+class BlockchainNotProvisioned(blockchainName: String) : BaseError() {
     override val code: Int = 10011
     override var customMessage: String =
         "$blockchainName not provisioned. Please add a $blockchainName wallet in the settings page"

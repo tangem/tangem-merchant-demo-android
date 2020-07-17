@@ -45,10 +45,14 @@ class ChargeTask(
             val blockChainAlreadyAdded =
                 blsItemList?.filter { it.blockchain.id == card.cardData?.blockchainName }?.isNotEmpty() ?: false
             if (blockChainAlreadyAdded) {
-                callback(CompletionResult.Failure(BlockchainNotSupported(cardBlockchain.fullName)))
-            } else {
-                Log.e(this, "Error: Blockchain do not match")
+                Log.e(this, "Error: Please choose a ${cardBlockchain.fullName} wallet to perform this transaction")
                 callback(CompletionResult.Failure(BlockchainDoNotMatch(cardBlockchain.fullName)))
+            } else {
+                Log.e(
+                    this,
+                    "Error: ${cardBlockchain.fullName} not provisioned. Please add a ${cardBlockchain.fullName} wallet in the settings page"
+                )
+                callback(CompletionResult.Failure(BlockchainNotProvisioned(cardBlockchain.fullName)))
             }
 
             return
