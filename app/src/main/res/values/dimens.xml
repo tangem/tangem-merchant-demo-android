@@ -10,4 +10,12 @@
     <dimen name="bg_corner_radius_blockchain">8dp</dimen>
     <dimen name="rv_blockchain_bottom_paddin">100dp</dimen>
     <dimen name="underlined_spinner_height">60dp</dimen>
+
+    <!--  Constraints, insets, padding, margin for the  fg_main.xml  -->
+    <dimen name="merchant_title_margin_top">8dp</dimen>
+    <dimen name="blockchain_spinner_height">40dp</dimen>
+    <dimen name="blockchain_spinner_margin_top">4dp</dimen>
+    <dimen name="fiat_layout_margin_top">24dp</dimen>
+    <dimen name="blockchain_value_margin_top">12dp</dimen>
+    <dimen name="fee_layout_margin_top">4dp</dimen>
 </resources>

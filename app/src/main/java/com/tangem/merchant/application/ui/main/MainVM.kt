@@ -6,7 +6,7 @@ import com.tangem.TangemSdk
 import com.tangem.blockchain.common.Blockchain
 import com.tangem.commands.CommandResponse
 import com.tangem.common.CompletionResult
-import com.tangem.merchant.application.domain.charge.ChargeSession
+import com.tangem.merchant.application.domain.charge.ChargeTask
 import com.tangem.merchant.application.domain.error.AppError
 import com.tangem.merchant.application.domain.error.AppMessage
 import com.tangem.merchant.application.domain.model.BlockchainItem
@@ -157,7 +157,7 @@ class MainVM : BlcItemListVM() {
         selectedBlcItemLD.value = blcItem
     }
 
-    fun chargeSessionCompleted(result: CompletionResult<CommandResponse>) {
+    private fun chargeSessionCompleted(result: CompletionResult<CommandResponse>) {
         when (result) {
             is CompletionResult.Success -> {
                 keyboardController.reset()
@@ -227,7 +227,7 @@ class MainVM : BlcItemListVM() {
     }
 
     fun startChargeSession(sdk: TangemSdk) {
-        sdk.startSessionWithRunnable(ChargeSession(getChargeData()) {
+        sdk.startSessionWithRunnable(ChargeTask(getChargeData(), blcItemListLD.value) {
             Log.d(this, "Calculated fee: BigDecimal: $it")
             Log.d(this, "Calculated fee: BigDecimal.toPlainString: ${it?.toPlainString()}")
             calculatedFeeValueLD.postValue(it?.toPlainString() ?: "")

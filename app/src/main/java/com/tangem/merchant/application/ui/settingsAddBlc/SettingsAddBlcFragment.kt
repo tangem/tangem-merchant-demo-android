@@ -82,7 +82,7 @@ class SettingsAddBlcFragment : BaseFragment() {
     private fun listenErrors() {
         settingsAddBlcVM.errorMessageSLE.observe(this, Observer {
             when (it) {
-                is AppError.CantAddDuplicateWallet -> showSnackbar(R.string.e_cant_add_duplicate_wallet)
+                is AppError.CantAddDuplicateWallet -> showSnackbar(R.string.error_cant_add_duplicate_wallet)
             }
         })
     }
@@ -122,7 +122,7 @@ class SettingsAddBlcFragment : BaseFragment() {
 class BlockchainSpinnerAdapter(
     context: Context,
     itemList: MutableList<Blockchain>
-) : BaseHintAdapter<Blockchain>(context, itemList, R.string.spinner_hint_choose_blc) {
+) : BaseHintAdapter<Blockchain>(context, itemList, R.string.add_wallet_choose_blockchain_field) {
 
     override fun getLabelFor(item: Blockchain): String = "${item.currency} - ${item.fullName} "
 }

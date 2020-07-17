@@ -23,7 +23,7 @@
     <fragment
         android:id="@+id/nav_screen_settings"
         android:name="com.tangem.merchant.application.ui.settings.SettingsFragment"
-        android:label="@string/screen_title_settings"
+        android:label="@string/settings_title"
         tools:layout="@layout/fg_settings">
 
         <action
@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/nav_screen_settings_add_blc"
         android:name="com.tangem.merchant.application.ui.settingsAddBlc.SettingsAddBlcFragment"
-        android:label="@string/screen_title_settings_add_blc"
+        android:label="@string/add_wallet_title"
         tools:layout="@layout/fg_settings" />
 
 </navigation>

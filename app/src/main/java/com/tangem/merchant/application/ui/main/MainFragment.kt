@@ -145,7 +145,7 @@ class BlcSpinnerAdapter(
 
 fun ToggleWidget.setupIndeterminateProgress(context: Context) {
     mainViewStateModifiers.clear()
-    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.main_charge_button), ""))
     mainViewStateModifiers.add(EnableDisableStateModifier())
     toggleStateModifiers.clear()
     toggleStateModifiers.add(ShowHideStateModifier())
@@ -153,7 +153,7 @@ fun ToggleWidget.setupIndeterminateProgress(context: Context) {
 
 fun ToggleWidget.setupIndeterminateProgressV2(context: Context) {
     mainViewStateModifiers.clear()
-    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.main_charge_button), ""))
     mainViewStateModifiers.add(ClickableStateModifier())
     toggleStateModifiers.clear()
     toggleStateModifiers.add(ShowHideStateModifier())

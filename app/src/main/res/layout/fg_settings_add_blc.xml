@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="@string/hint_blc_address"
+        android:hint="@string/add_wallet_address_field"
         android:textColorHint="@color/textSecondaryLight"
         app:boxBackgroundColor="@android:color/transparent"
         app:hintTextColor="@color/textSecondaryLight"
@@ -64,7 +64,7 @@
             android:layout_marginStart="46dp"
             android:layout_marginEnd="46dp"
             android:layout_marginBottom="40dp"
-            android:text="@string/btn_add_blc"
+            android:text="@string/add_wallet_add_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

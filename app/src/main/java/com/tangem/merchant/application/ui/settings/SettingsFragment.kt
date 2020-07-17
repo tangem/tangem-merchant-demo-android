@@ -63,7 +63,7 @@ class SettingsFragment : BaseFragment() {
                 if (mainVM.canNavigateUpFromSettingsScreen()) {
                     if (!Navigation.findNavController(mainView).navigateUp()) requireActivity().finish()
                 } else {
-                    activity.toast(R.string.e_not_enough_data_for_launch, Toast.LENGTH_LONG)
+                    activity.toast(R.string.error_not_enough_data_for_launch, Toast.LENGTH_LONG)
                 }
             }
         })
@@ -156,8 +156,8 @@ class SettingsFragment : BaseFragment() {
 class FiatCurrencySpinnerAdapter(
     context: Context,
     itemList: List<FiatCurrency>
-) : BaseHintAdapter<FiatCurrency>(context, itemList.toMutableList(), R.string.spinner_hint_fiat_currency) {
-//    United States Dollar (USD) - $
+) : BaseHintAdapter<FiatCurrency>(context, itemList.toMutableList(), R.string.settings_base_currency_field) {
+    //    United States Dollar (USD) - $
     override fun getLabelFor(item: FiatCurrency): String = "${item.name} (${item.symbol}) - ${item.sign}"
 }
 
