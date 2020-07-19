@@ -51,7 +51,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun initChargeButton() {
-        loadingButton = ToggleWidget(flTest, btnCharge, progress, ProgressState.None())
+        loadingButton = ToggleWidget(flBtnChareContainer, btnCharge, progress, ProgressState.None())
         loadingButton.setupIndeterminateProgressV2(requireContext())
         loadingButton.setState(ProgressState.None())
         btnCharge.setOnClickListener { mainVM.startChargeSession(TangemSdk.init(requireActivity())) }
