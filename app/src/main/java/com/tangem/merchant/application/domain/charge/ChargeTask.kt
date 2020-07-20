@@ -3,22 +3,26 @@ package com.tangem.merchant.application.domain.charge
 import com.tangem.CardSession
 import com.tangem.CardSessionRunnable
 import com.tangem.TangemSdkError
-import com.tangem.blockchain.common.*
+import com.tangem.blockchain.common.Amount
+import com.tangem.blockchain.common.Blockchain
+import com.tangem.blockchain.common.TransactionSender
+import com.tangem.blockchain.common.WalletManagerFactory
 import com.tangem.blockchain.extensions.Result
 import com.tangem.blockchain.extensions.SimpleResult
-import com.tangem.blockchain.extensions.isAboveZero
+import com.tangem.commands.Card
 import com.tangem.commands.CommandResponse
 import com.tangem.common.CompletionResult
+import com.tangem.merchant.application.domain.model.BlockchainItem
 import com.tangem.merchant.application.domain.model.ChargeData
 import com.tangem.merchant.application.network.NetworkChecker
 import kotlinx.coroutines.*
 import ru.dev.gbixahue.eu4d.lib.android.global.log.Log
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
 
-class ChargeSession(
+class ChargeTask(
     private val data: ChargeData,
+    private val blsItemList: MutableList<BlockchainItem>?,
     private val feeCallback: (BigDecimal?) -> Unit
 ) : CardSessionRunnable<CommandResponse> {
 
@@ -31,14 +35,26 @@ class ChargeSession(
     override fun run(session: CardSession, callback: (result: CompletionResult<CommandResponse>) -> Unit) {
         val card = session.environment.card
         if (card == null) {
-            callback(CompletionResult.Failure(TangemSdkError.CardError()))
+            callback(CompletionResult.Failure(TangemSdkError.MissingPreflightRead()))
             return
         }
 
         val destBlcItem = data.blcItem
-        if (destBlcItem.blockchain.id != card.cardData?.blockchainName) {
-            Log.e(this, "Error: Blockchain do not match")
-            callback(CompletionResult.Failure(BlockchainDidNotMatch()))
+        val cardBlockchain = getBlockchainFromCard(card)
+        if (destBlcItem.blockchain.id != cardBlockchain.id) {
+            val blockChainAlreadyAdded =
+                blsItemList?.filter { it.blockchain.id == card.cardData?.blockchainName }?.isNotEmpty() ?: false
+            if (blockChainAlreadyAdded) {
+                Log.e(this, "Error: Please choose a ${cardBlockchain.fullName} wallet to perform this transaction")
+                callback(CompletionResult.Failure(BlockchainDoNotMatch(cardBlockchain.fullName)))
+            } else {
+                Log.e(
+                    this,
+                    "Error: ${cardBlockchain.fullName} not provisioned. Please add a ${cardBlockchain.fullName} wallet in the settings page"
+                )
+                callback(CompletionResult.Failure(BlockchainNotProvisioned(cardBlockchain.fullName)))
+            }
+
             return
         }
 
@@ -47,10 +63,9 @@ class ChargeSession(
         } catch (ex: Exception) {
             null
         }
-
         if (walletManager == null) {
-            Log.e(this, "Error: Blockchain not supported")
-            callback(CompletionResult.Failure(BlockchainNotSupport()))
+            Log.e(this, "Error: Blockchain not supported by walletManager")
+            callback(CompletionResult.Failure(BlockchainNotSupportedByWalletManager()))
             return
         }
 
@@ -60,22 +75,29 @@ class ChargeSession(
             return
         }
 
-        checkNetworkAvailabilityAndNotify(callback)
         // address в Amount важен только при использовании токена
         val amount =
             Amount(castDecimals(data.writeOfValue, destBlcItem.blockchain), destBlcItem.blockchain, destBlcItem.address)
+        if (!checkNetworkAvailabilityAndNotify(callback)) return
 
         scope.launch {
             try {
                 Log.d(this, "Update wallet")
                 walletManager.update()
             } catch (ex: Exception) {
-                Log.e(this, ex)
+                Log.e(this, "Error: Update wallet: $ex")
                 callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(ex)))
                 return@launch
             }
 
-            checkNetworkAvailabilityAndNotify(callback)
+            val amountError = walletManager.validateTransaction(amount, null)
+            if (amountError.isNotEmpty()) {
+                Log.d(this, "Error: Validate amount error")
+                callback(CompletionResult.Failure(InsufficientBalance()))
+                return@launch
+            }
+            if (!checkNetworkAvailabilityAndNotify(callback)) return@launch
+
             Log.d(this, "Get fee")
             val txSender = walletManager as TransactionSender
             when (val feeResult = txSender.getFee(amount, destBlcItem.address)) {
@@ -85,29 +107,28 @@ class ChargeSession(
                     else feeResult.data[0]
 
                     feeCallback(feeAmount.value)
-                    val txData = walletManager.createTransaction(amount, feeAmount, destBlcItem.address)
-                    val errors = validateTransaction(amount, feeAmount, walletManager)
-                    if (errors.isNotEmpty()) {
-                        Log.d(this, "Error: Validate transaction error")
-                        callback(CompletionResult.Failure(ValidationTransactionTransaction.from(errors)))
-                        return@launch
+                    val validationErrors = walletManager.validateTransaction(amount, feeAmount)
+                    if (validationErrors.isNotEmpty()) {
+                        Log.d(this, "Error: Validate amount and feeAmount error")
+                        callback(CompletionResult.Failure(InsufficientBalance()))
                     }
-                    Log.d(this, "Start sending of a transaction")
+                    if (!checkNetworkAvailabilityAndNotify(callback)) return@launch
 
-                    checkNetworkAvailabilityAndNotify(callback)
+                    Log.d(this, "Start sending of a transaction")
+                    val txData = walletManager.createTransaction(amount, feeAmount, destBlcItem.address)
                     when (val result = txSender.send(txData, SessionTransactionSigner(session))) {
                         is SimpleResult.Success -> {
-                            Log.d(this, "Getting fee is success")
+                            Log.d(this, "Sending transaction is success")
                             callback(CompletionResult.Success(SomeSuccessResponse()))
                         }
                         is SimpleResult.Failure -> {
-                            Log.e(this, "Error: ${result.error}")
+                            Log.e(this, "Error: Sending transaction: ${result.error}")
                             callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(result.error)))
                         }
                     }
                 }
                 is Result.Failure -> {
-                    Log.e(this, "Error: ${feeResult.error}")
+                    Log.e(this, "Error: Getting fee: ${feeResult.error}")
                     callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(feeResult.error)))
                 }
             }
@@ -118,34 +139,16 @@ class ChargeSession(
         return value.setScale(blockchain.decimals(), RoundingMode.HALF_UP)
     }
 
-    private fun validateTransaction(
-        amount: Amount,
-        fee: Amount?,
-        walletManager: WalletManager
-    ): EnumSet<TransactionError> {
-        val errors = EnumSet.noneOf(TransactionError::class.java)
-
-        if (!validateAmount(amount, walletManager)) errors.add(TransactionError.WrongAmount)
-        if (fee == null) return errors
-
-        if (!validateAmount(fee, walletManager)) errors.add(TransactionError.WrongFee)
-        val total = (amount.value ?: BigDecimal.ZERO) + (fee.value ?: BigDecimal.ZERO)
-        if (!validateAmount(Amount(amount, total), walletManager)) errors.add(TransactionError.WrongTotal)
-
-        return errors
-    }
-
-    private fun validateAmount(amount: Amount, walletManager: WalletManager): Boolean {
-        return amount.isAboveZero() && walletManager.wallet.fundsAvailable(amount.type) >= amount.value
-    }
-
     private fun isDifferentWalletAddress(srcAddress: String, destAddress: String): Boolean = srcAddress != destAddress
 
-    private fun checkNetworkAvailabilityAndNotify(callback: (result: CompletionResult<CommandResponse>) -> Unit) {
+    private fun checkNetworkAvailabilityAndNotify(callback: (result: CompletionResult<CommandResponse>) -> Unit): Boolean {
         val checker = NetworkChecker.getInstance()
         val isConnected = checker.activeNetworkIsConnected()
         if (!isConnected) callback(CompletionResult.Failure(NoInternetConnection()))
+        return isConnected
     }
+
+    private fun getBlockchainFromCard(card: Card): Blockchain = Blockchain.fromId(card.cardData?.blockchainName ?: "")
 }
 
 class SomeSuccessResponse : CommandResponse {

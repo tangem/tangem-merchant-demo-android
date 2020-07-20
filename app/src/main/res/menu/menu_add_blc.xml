@@ -5,7 +5,7 @@
     <item
         android:id="@+id/menu_action_add_blockchain"
         android:icon="@drawable/ic_add"
-        android:title="@string/screen_title_settings"
+        android:title="@string/settings_title"
         app:showAsAction="always" />
 
 </menu>

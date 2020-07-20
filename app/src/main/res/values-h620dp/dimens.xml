@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="keyboard_button_padding">0dp</dimen>
+    <dimen name="keyboard_button_ripple_padding">20dp</dimen>
+    <dimen name="keyboard_button_text_size">40sp</dimen>
+    <dimen name="keyboard_button_image_size">25sp</dimen>
+
+    <!--  Main  -->
+    <dimen name="main_merchant_title_margin_top">4dp</dimen>
+    <dimen name="main_merchant_title_text_size">28sp</dimen>
+
+    <dimen name="main_blockchain_spinner_margin_top">4dp</dimen>
+    <dimen name="main_blockchain_spinner_height">40dp</dimen>
+
+    <dimen name="main_fiat_layout_margin_top">28dp</dimen>
+    <dimen name="main_fiat_value_height">64dp</dimen>
+    <dimen name="main_fiat_value_text_size">50sp</dimen>
+
+    <dimen name="main_blockchain_value_margin_top">8dp</dimen>
+    <dimen name="main_blockchain_value_text_size">16sp</dimen>
+
+    <dimen name="main_fee_layout_margin_top">4dp</dimen>
+
+    <dimen name="main_keyboard_margin_start">28dp</dimen>
+    <dimen name="main_keyboard_margin_top">16dp</dimen>
+    <dimen name="main_keyboard_margin_end">28dp</dimen>
+    <dimen name="main_keyboard_margin_bottom">25dp</dimen>
+
+    <dimen name="main_charge_container_margin_bottom">35dp</dimen>
+
+    <!--  Settings -->
+    <dimen name="settings_merchant_container_margin_top">24dp</dimen>
+
+    <!--  Add wallet -->
+    <dimen name="add_wallet_blockchain_container_margin_top">32dp</dimen>
+</resources>

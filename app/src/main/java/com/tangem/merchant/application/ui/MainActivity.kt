@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
 
             if (currentDestination == R.id.nav_screen_settings) {
                 if (mainVM.canNavigateUpFromSettingsScreen()) navController.navigateUp()
-                else toast(R.string.e_not_enough_data_for_launch, Toast.LENGTH_LONG)
+                else toast(R.string.error_not_enough_data_for_launch, Toast.LENGTH_LONG)
             } else {
                 navController.navigateUp()
             }
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
     }
 
     override fun showSnackbar(message: String, length: Int) {
-        Snackbar.make(nav_host_fragment,  message, length).show()
+        Snackbar.make(nav_host_fragment, message, length).show()
     }
 
     private fun listenMessages() {
@@ -95,11 +95,10 @@ class MainActivity : AppCompatActivity(), SnackbarHolder {
         mainVM.errorMessageSLE.observe(this, Observer {
             when (it) {
                 is AppError.Throwable -> showSnackbar(it.throwable.toString())
-                is AppError.UnsupportedConversion -> showSnackbar(R.string.e_unsupported_conversion)
-                is AppError.ConversionError -> showSnackbar(R.string.e_coin_market_conversion_error)
+                is AppError.UnsupportedConversion -> showSnackbar(R.string.error_unsupported_conversion)
+                is AppError.ConversionError -> showSnackbar(R.string.error_coin_market_conversion_error)
                 is AppError.CoinMarketHttpError -> showSnackbar(it.errorMessage)
-                is AppError.CoinMarketHttpError -> showSnackbar(R.string.payment_transaction_complete)
-                is AppError.NoInternetConnection -> showSnackbar(R.string.e_lost_internet_connection)
+                is AppError.NoInternetConnection -> showSnackbar(R.string.error_lost_internet_connection)
             }
         })
     }

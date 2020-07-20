@@ -51,7 +51,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun initChargeButton() {
-        loadingButton = ToggleWidget(flTest, btnCharge, progress, ProgressState.None())
+        loadingButton = ToggleWidget(flBtnChareContainer, btnCharge, progress, ProgressState.None())
         loadingButton.setupIndeterminateProgressV2(requireContext())
         loadingButton.setState(ProgressState.None())
         btnCharge.setOnClickListener { mainVM.startChargeSession(TangemSdk.init(requireActivity())) }
@@ -102,7 +102,9 @@ class MainFragment : BaseFragment() {
     }
 
     private fun listenFeeCalculation() {
-//        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer { tvFeeValue.text = it })
+        mainVM.getCalculatedFeeValue().observe(viewLifecycleOwner, Observer {
+//            tvFeeValue.text = it
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -143,7 +145,7 @@ class BlcSpinnerAdapter(
 
 fun ToggleWidget.setupIndeterminateProgress(context: Context) {
     mainViewStateModifiers.clear()
-    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.main_charge_button), ""))
     mainViewStateModifiers.add(EnableDisableStateModifier())
     toggleStateModifiers.clear()
     toggleStateModifiers.add(ShowHideStateModifier())
@@ -151,7 +153,7 @@ fun ToggleWidget.setupIndeterminateProgress(context: Context) {
 
 fun ToggleWidget.setupIndeterminateProgressV2(context: Context) {
     mainViewStateModifiers.clear()
-    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.btn_charge), ""))
+    mainViewStateModifiers.add(ReplaceTextStateModifier(context.stringFrom(R.string.main_charge_button), ""))
     mainViewStateModifiers.add(ClickableStateModifier())
     toggleStateModifiers.clear()
     toggleStateModifiers.add(ShowHideStateModifier())

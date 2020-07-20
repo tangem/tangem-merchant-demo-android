@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="bg_corner_radius">4dp</dimen>
-    <dimen name="bg_corner_radius_blockchain">8dp</dimen>
-    <dimen name="rv_blockchain_bottom_paddin">100dp</dimen>
-    <dimen name="underlined_spinner_height">60dp</dimen>
-
     <dimen name="keyboard_button_padding">0dp</dimen>
     <dimen name="keyboard_button_ripple_padding">20dp</dimen>
     <dimen name="keyboard_button_text_size">40sp</dimen>
@@ -18,7 +13,7 @@
     <dimen name="main_blockchain_spinner_margin_top">4dp</dimen>
     <dimen name="main_blockchain_spinner_height">40dp</dimen>
 
-    <dimen name="main_fiat_layout_margin_top">24dp</dimen>
+    <dimen name="main_fiat_layout_margin_top">32dp</dimen>
     <dimen name="main_fiat_value_height">70dp</dimen>
     <dimen name="main_fiat_value_text_size">50sp</dimen>
 
