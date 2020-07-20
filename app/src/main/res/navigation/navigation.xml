@@ -4,15 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@+id/nav_entry_point">
 
-    <!--    <action-->
-    <!--        android:id="@+id/action_nav_card_action_to_response_screen"-->
-    <!--        app:destination="@+id/nav_card_response"-->
-    <!--        app:enterAnim="@anim/slide_in_right"-->
-    <!--        app:exitAnim="@anim/slide_out_left"-->
-    <!--        app:popEnterAnim="@anim/slide_in_left"-->
-    <!--        app:popExitAnim="@anim/slide_out_right"-->
-    <!--        app:popUpTo="@id/nav_entry_point"-->
-    <!--        app:popUpToInclusive="false" />-->
+    <action
+        android:id="@+id/action_screen_settings_to_entry_point"
+        app:popUpToInclusive="true"
+        app:destination="@id/nav_entry_point" />
 
     <fragment
         android:id="@+id/nav_entry_point"
@@ -21,14 +16,25 @@
         tools:layout="@layout/fg_main">
 
         <action
-            android:id="@+id/action_nav_entry_point_to_nav_screen_settings"
+            android:id="@+id/action_entry_point_to_screen_settings"
             app:destination="@id/nav_screen_settings" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_screen_settings"
         android:name="com.tangem.merchant.application.ui.settings.SettingsFragment"
-        android:label="@string/screen_title_settings"
+        android:label="@string/settings_title"
+        tools:layout="@layout/fg_settings">
+
+        <action
+            android:id="@+id/action_screen_settings_to_screen_settings_add_blc"
+            app:destination="@id/nav_screen_settings_add_blc" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_screen_settings_add_blc"
+        android:name="com.tangem.merchant.application.ui.settingsAddBlc.SettingsAddBlcFragment"
+        android:label="@string/add_wallet_title"
         tools:layout="@layout/fg_settings" />
 
 </navigation>

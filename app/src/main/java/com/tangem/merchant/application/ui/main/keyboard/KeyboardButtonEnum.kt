@@ -14,5 +14,6 @@ enum class KeyboardButtonEnum private constructor(val buttonValue: Int) {
     BUTTON_7(7),
     BUTTON_8(8),
     BUTTON_9(9),
-    BUTTON_CLEAR(-1)
+    BUTTON_COMA(-1),
+    BUTTON_CLEAR(-100)
 }
