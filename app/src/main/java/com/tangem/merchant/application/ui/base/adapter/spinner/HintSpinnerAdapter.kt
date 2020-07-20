@@ -70,6 +70,8 @@ open class BaseHintAdapter<T>(
 
     var hasChanges = false
 
+    private var dropDownViewTextColor: Int = -1
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val viewId = if (!hasChanges) R.layout.sp_item else R.layout.sp_item_selected
         val layout = convertView ?: parent.inflate(viewId)
@@ -91,7 +93,9 @@ open class BaseHintAdapter<T>(
             textView.text = hint
             textView.setTextColor(textView.colorFrom(R.color.textSecondary))
         } else {
+            if (dropDownViewTextColor == -1) dropDownViewTextColor = textView.currentTextColor
             textView.text = getLabelFor(itemList[position - 1])
+            textView.setTextColor(dropDownViewTextColor)
         }
 
         layout.setOnTouchListener { _, _ ->
