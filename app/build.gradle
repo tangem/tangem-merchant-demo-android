@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "0.0.2"
+        versionName "1.0.0"
         setProperty("archivesBaseName", "tangem-take-$versionName")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,7 +67,7 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:1.9.2"
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
-    implementation 'com.tangem:blockchain:0.14.3'
+    implementation 'com.tangem:blockchain:1.19.0'
     implementation 'com.github.gbIxaHue:eu4d:0.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 }
