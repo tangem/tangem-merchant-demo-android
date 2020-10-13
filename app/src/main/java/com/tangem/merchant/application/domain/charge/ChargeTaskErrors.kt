@@ -6,9 +6,10 @@ import com.tangem.TangemError
  * Created by Anton Zhilenkov on 12/07/2020.
  */
 abstract class BaseError : TangemError {
+    override val messageResId: Int? = null
 }
 
-class UnknownError : TangemError {
+class UnknownError : BaseError() {
     override val code: Int = 1000
     override var customMessage: String = "Unknown error"
 }
