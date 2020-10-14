@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 29
@@ -18,8 +20,13 @@ android {
     }
 
     buildTypes {
+        debug{
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -67,7 +74,11 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:1.9.3"
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
-    implementation 'com.tangem:blockchain:1.81.0'
+    implementation 'com.tangem:blockchain:1.83.0'
     implementation 'com.github.gbIxaHue:eu4d:0.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 }
