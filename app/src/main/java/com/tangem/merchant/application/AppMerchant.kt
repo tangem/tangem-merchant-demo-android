@@ -18,19 +18,10 @@ class AppMerchant : Application() {
         super.onCreate()
 
         appInstance = this
-        initCrashlytics()
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
         NetworkChecker.createInstance(this)
         Log.setLogger(AppLog())
     }
-
-    private fun initCrashlytics() {
-        val crashlytics = FirebaseCrashlytics.getInstance()
-        crashlytics.setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
-        if (crashlytics.didCrashOnPreviousExecution()) {
-//            TODO: need some action
-        }
-    }
-
 
     fun sharedPreferences(name: String = APP_NAME, mode: Int = Context.MODE_PRIVATE): SharedPreferences {
         return getSharedPreferences(name, mode)
