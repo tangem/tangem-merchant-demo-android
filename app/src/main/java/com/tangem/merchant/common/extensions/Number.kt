@@ -10,3 +10,5 @@ import java.util.*
 fun BigDecimal.formatToCurrency(currencyCode: String): String {
     return NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance(currencyCode) }.format(this)
 }
+
+fun BigDecimal.stripZeroPlainString(): String = this.stripTrailingZeros().toPlainString()
