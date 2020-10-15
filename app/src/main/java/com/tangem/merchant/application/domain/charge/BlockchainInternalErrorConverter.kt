@@ -13,6 +13,7 @@ class BlockchainInternalErrorConverter {
             "tx_bad_seq" to "Sequence number does not match source account",
             "tx_too_late" to "The ledger closeTime was after the maxTime",
             "tx_failedop_no_destination" to "The destination account does not exist",
+            "tx_failedop_underfunded" to "Source account not found",
             "tx_no_source_account" to "Source account not found"
         )
 

@@ -8,7 +8,6 @@ import com.tangem.blockchain.common.Blockchain
 import com.tangem.blockchain.common.TransactionSender
 import com.tangem.blockchain.common.WalletManagerFactory
 import com.tangem.blockchain.extensions.Result
-import com.tangem.blockchain.extensions.SimpleResult
 import com.tangem.commands.Card
 import com.tangem.commands.CommandResponse
 import com.tangem.common.CompletionResult
@@ -117,11 +116,11 @@ class ChargeTask(
                     Log.d(this, "Start sending of a transaction")
                     val txData = walletManager.createTransaction(amount, feeAmount, destBlcItem.address)
                     when (val result = txSender.send(txData, SessionTransactionSigner(session))) {
-                        is SimpleResult.Success -> {
+                        is Result.Success -> {
                             Log.d(this, "Sending transaction is success")
                             callback(CompletionResult.Success(SomeSuccessResponse()))
                         }
-                        is SimpleResult.Failure -> {
+                        is Result.Failure -> {
                             Log.e(this, "Error: Sending transaction: ${result.error}")
                             callback(CompletionResult.Failure(BlockchainInternalErrorConverter.convert(result.error)))
                         }

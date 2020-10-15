@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "852662930103",
+    "firebase_url": "https://tangem-take.firebaseio.com",
+    "project_id": "tangem-take",
+    "storage_bucket": "tangem-take.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852662930103:android:82b8f91dc6797456431b32",
+        "android_client_info": {
+          "package_name": "com.tangem.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "852662930103-i2137lhefgmo0dvlqq96vt1ddkepab45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqpwMtJK_-DnMYcgFeX1CRjBj4pObMDhE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852662930103-i2137lhefgmo0dvlqq96vt1ddkepab45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

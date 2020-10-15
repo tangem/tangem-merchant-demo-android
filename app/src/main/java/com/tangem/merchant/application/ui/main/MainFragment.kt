@@ -96,7 +96,7 @@ class MainFragment : BaseFragment() {
 
     private fun listenConversionChanges() {
         mainVM.getConvertedFiatValue().observe(viewLifecycleOwner, Observer {
-            tvBlockchainValue.text = it.toString()
+            tvBlockchainValue.text = it.toPlainString()
             loadingButton.setState(ProgressState.None())
         })
     }

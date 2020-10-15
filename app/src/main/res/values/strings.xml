@@ -26,12 +26,11 @@
     <string name="error_coin_market_conversion_error">Currency conversion error</string>
     <string name="error_lost_internet_connection">There is no internet connection. Please check your connection and try again</string>
     ​
-    <string name="error_unknown_error">Unknown error</string>
+    <string name="error_unknown">Unknown error</string>
     <string name="error_insufficient_balance">Insufficient balance</string>
-    <!--  %s = asset -->
-<!--    <string name="error_blockchain_not_supported">%s not provisioned. Please add a %s wallet in the settings page</string>-->
-<!--    <string name="error_blockchain_doesnt_match">Please choose a %s wallet to perform this transaction</string>-->
     <string name="error_the_same_address">Source and destination address are the same</string>
     <string name="error_validation_error">Unknown transaction validation error</string>
     <string name="error_cant_add_duplicate_wallet">You already have wallet with the same address in your list</string>
+
+    <string name="error_blockchain_not_supported">Blockchain not supported</string>
 </resources>
