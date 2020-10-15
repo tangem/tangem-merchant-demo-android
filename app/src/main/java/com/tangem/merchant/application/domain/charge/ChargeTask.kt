@@ -41,9 +41,9 @@ class ChargeTask(
 
         val destBlcItem = data.blcItem
         val cardBlockchain = getBlockchainFromCard(card)
-        if (destBlcItem.blockchain.id != cardBlockchain.id) {
+        if (destBlcItem.blockchain.currency != cardBlockchain.currency) {
             val blockChainAlreadyAdded =
-                blsItemList?.filter { it.blockchain.id == card.cardData?.blockchainName }?.isNotEmpty() ?: false
+                blsItemList?.filter { it.blockchain.currency == cardBlockchain.currency }?.isNotEmpty() ?: false
             if (blockChainAlreadyAdded) {
                 Log.e(this, "Error: Please choose a ${cardBlockchain.fullName} wallet to perform this transaction")
                 callback(CompletionResult.Failure(BlockchainDoNotMatch(cardBlockchain.fullName)))
