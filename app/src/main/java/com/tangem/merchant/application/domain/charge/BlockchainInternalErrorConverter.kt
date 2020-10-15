@@ -22,7 +22,7 @@ class BlockchainInternalErrorConverter {
 
             val customMessage = getInternalBlockchainErrorMessage(message)
             return if (customMessage == null) ThrowableError(throwable)
-            else BlockchainInternalError(customMessage)
+            else CustomMessageError(customMessage)
         }
 
         private fun getInternalBlockchainErrorMessage(message: String): String? {
