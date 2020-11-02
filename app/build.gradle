@@ -74,7 +74,7 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:1.9.3"
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
-    implementation 'com.tangem:blockchain:1.86.0'
+    implementation 'com.tangem:blockchain:1.98.0'
     implementation 'com.github.gbIxaHue:eu4d:0.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 
