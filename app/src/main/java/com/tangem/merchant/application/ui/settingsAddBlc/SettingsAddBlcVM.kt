@@ -25,7 +25,7 @@ class SettingsAddBlcVM : BlcItemListVM() {
     private val isBlcAddressValidLD = MutableLiveData<Boolean>()
 
     fun getBlockchainList(): MutableList<Blockchain> {
-        val restrictList = listOf(Blockchain.Unknown, Blockchain.Ducatus, Blockchain.Tezos)
+        val restrictList = listOf(Blockchain.Unknown, Blockchain.Ducatus)
         return Blockchain.values().filter { !(restrictList.contains(it) || it.id.contains("test")) }
             .toMutableList()
     }
